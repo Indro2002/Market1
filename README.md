@@ -1,205 +1,155 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8" />
-  <title>POS Market – Final Fixed + Complete</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <style>
-    :root{
-      --bg:#eef4ff;
-      --card:#ffffff;
-      --primary:#2563eb;
-      --primary-2:#1d4ed8;
-      --nav:#111827;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --success:#16a34a;
-      --danger:#dc2626;
-      --warning:#b45309;
-      --soft:#eff6ff;
-      --soft-2:#f8fafc;
-      --shadow:0 10px 26px rgba(15,23,42,.08);
-      --radius:16px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>POS Market Ultra Final</title>
 
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      padding:0;
-      font-family:Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
-    body{min-height:100vh}
-
-    header{
-      background:linear-gradient(135deg, var(--nav), #1f2937);
-      color:white;
-      padding:14px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      box-shadow:0 8px 18px rgba(17,24,39,.12);
-      position:sticky;
-      top:0;
-      z-index:30;
-    }
-    header h2{margin:0;font-size:1.15rem}
-    nav{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-    nav button{
-      border:none;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;padding:8px 12px;font-weight:600;cursor:pointer
-    }
-    nav button:hover{background:rgba(255,255,255,.16)}
-    .alert-bell{
-      background:linear-gradient(135deg,#fbbf24,#f59e0b);
-      color:#111827;font-weight:800;border-radius:999px;padding:7px 12px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-      box-shadow:0 6px 16px rgba(245,158,11,.25)
-    }
-    .badge{background:#ef4444;color:white;border-radius:999px;padding:2px 7px;font-size:.75rem;min-width:20px;text-align:center}
-
-    section{display:none;padding:18px}
-    section.active{display:block}
-
-    .card{
-      background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;
-      border:1px solid rgba(148,163,184,.15);
-    }
-    .card h3{margin-top:0;margin-bottom:12px}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .col{flex:1;min-width:120px}
-    input,select,button,textarea{
-      font:inherit;padding:10px 12px;border-radius:10px;border:1px solid #cbd5e1;outline:none;
-    }
-    input:focus,select:focus,textarea:focus{
-      border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);
-    }
-    button{
-      background:linear-gradient(135deg, var(--primary), var(--primary-2));
-      color:#fff;border:none;font-weight:700;cursor:pointer;
-      transition:.18s ease;box-shadow:0 8px 18px rgba(37,99,235,.2);
-    }
-    button:hover{transform:translateY(-1px)}
-    button.secondary{background:linear-gradient(135deg,#64748b,#475569)}
-    button.danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
-    button.success{background:linear-gradient(135deg,#16a34a,#15803d)}
-
-    table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff;border-radius:10px;overflow:hidden}
-    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;word-break:break-word;vertical-align:middle}
-    th{background:var(--soft-2);font-weight:700;color:#334155}
-    tr:last-child td{border-bottom:none}
-
-    .small{font-size:.9rem;color:var(--muted)}
-    .muted{color:var(--muted)}
-    .admin{display:none}
-    .qtyBtn{padding:5px 8px;border-radius:8px}
-
-    .modal{
-      position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;z-index:99;padding:20px;overflow:auto;
-    }
-    .modal-content{
-      background:white;border-radius:18px;max-width:760px;width:min(95%,760px);margin:60px auto;padding:18px;
-      box-shadow:0 20px 45px rgba(0,0,0,.18);max-height:78vh;overflow:auto;
-    }
-    .small-modal{max-width:620px}
-    .txn-list{margin:6px 0;padding-left:18px}
-    .txn-summary{font-weight:700;margin-top:8px}
-    .warn{color:var(--warning);font-weight:700}
-    .success{color:var(--success);font-weight:700}
-    .danger-text{color:var(--danger);font-weight:700}
-    .expired{background:#fee2e2}
-    .expiring{background:#fff7ed}
-    .lowstock{background:#fff7f0}
-    .category-select{width:100%}
-    .stats-grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px;
-    }
-    .stat-box{
-      background:linear-gradient(135deg,#f8fbff,#eef6ff);padding:14px;border-radius:12px;border:1px solid rgba(37,99,235,.12);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
-    }
-    .stat-label{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
-    .stat-value{font-size:1.5rem;font-weight:800;margin-top:6px}
-    .loyalty-box{
-      background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:12px;padding:12px;margin-top:12px;
-    }
-    .loyalty-positive{color:#15803d;font-weight:700}
-    .loyalty-balance{
-      background:rgba(255,255,255,.4);border:1px solid rgba(59,130,246,.15);border-radius:8px;padding:8px;margin-top:8px;
-    }
-    .report-box{
-      background:linear-gradient(135deg,#f8fafc,#f1f5f9);
-      border:1px solid #dbe3ef;border-radius:12px;padding:12px;margin-top:12px;
-    }
-    @media (max-width:700px){
-      .row{flex-direction:column}
-      nav{width:100%}
-      nav button{flex:1 1 100%}
-      .modal-content{margin:16px auto}
-    }
-  </style>
-
-  <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.js"></script>
+<style>
+:root{
+  --bg:#eef4ff;--card:#fff;--primary:#2563eb;--primary2:#1d4ed8;
+  --nav:#111827;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;
+  --success:#16a34a;--danger:#dc2626;--warning:#b45309;
+  --shadow:0 10px 26px rgba(15,23,42,.08);--radius:16px
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;min-height:100%;
+  font-family:Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--text)
+}
+header{
+  position:sticky;top:0;z-index:20;display:flex;
+  align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;padding:14px 18px;color:#fff;
+  background:linear-gradient(135deg,var(--nav),#1f2937)
+}
+header h2{margin:0;font-size:1.15rem}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+section{display:none;padding:18px}
+section.active{display:block}
+.card{
+  padding:18px;margin-bottom:14px;background:var(--card);
+  border:1px solid #94a3b82e;border-radius:var(--radius);
+  box-shadow:var(--shadow)
+}
+.card h3{margin:0 0 12px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.col{flex:1;min-width:130px}
+input,select,button{
+  font:inherit;padding:10px 12px;border:1px solid #cbd5e1;
+  border-radius:10px;outline:0
+}
+input:focus,select:focus{
+  border-color:var(--primary);box-shadow:0 0 0 3px #2563eb22
+}
+button{
+  border:0;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary2));
+  font-weight:700;cursor:pointer;box-shadow:0 7px 16px #2563eb33
+}
+button:hover{transform:translateY(-1px)}
+button.secondary{background:linear-gradient(135deg,#64748b,#475569)}
+button.danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+nav button{background:#ffffff18;color:#fff}
+table{width:100%;margin-top:12px;border-collapse:collapse;background:#fff}
+th,td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle}
+th{background:#f8fafc;color:#334155}
+tr:last-child td{border-bottom:0}
+.small{color:var(--muted);font-size:.9rem}
+.muted{color:var(--muted)}
+.admin{display:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.stat{padding:14px;border:1px solid #2563eb22;border-radius:12px;background:linear-gradient(135deg,#f8fbff,#eef6ff)}
+.stat-label{color:var(--muted);font-size:.8rem;text-transform:uppercase}
+.stat-value{margin-top:5px;font-size:1.35rem;font-weight:800}
+.loyalty{margin-top:12px;padding:12px;border:1px solid #bfdbfe;border-radius:12px;background:linear-gradient(135deg,#eff6ff,#dbeafe)}
+.green{color:var(--success);font-weight:700}
+.red{color:var(--danger);font-weight:700}
+.warn{color:var(--warning);font-weight:700}
+.alert-bell{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:#f59e0b;color:#111827;font-weight:800;cursor:pointer}
+.badge{background:#ef4444;color:#fff;border-radius:999px;min-width:20px;padding:2px 7px;text-align:center;font-size:.75rem}
+.results{display:none;margin-top:8px;padding:8px;border:1px solid #bfdbfe;border-radius:10px;background:#f8fbff}
+.result-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.result-row:last-child{border-bottom:0}
+.expired{background:#fee2e2}.expiring{background:#fff7ed}.lowstock{background:#fff7f0}
+.modal{position:fixed;inset:0;z-index:90;display:none;overflow:auto;padding:20px;background:#0f172a99}
+.modal-content{width:min(95%,760px);max-height:82vh;overflow:auto;margin:40px auto;padding:18px;border-radius:18px;background:#fff;box-shadow:0 20px 45px #0003}
+@media(max-width:700px){
+  .row{flex-direction:column}nav{width:100%}nav button{flex:1 1 100%}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+}
+@media print{
+  body *{visibility:hidden!important}
+  #printArea,#printArea *{visibility:visible!important}
+  #printArea{position:absolute;left:0;top:0;width:100%;padding:10px;background:#fff}
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <h2>🛒 POS Market Final</h2>
-    <div id="alertBell" class="alert-bell" title="Alerts" onclick="openAlertsModal()">
+    <h2>🛒 POS Market Ultra Final</h2>
+    <div class="alert-bell" onclick="openAlertsModal()">
       ALARME <span id="alertCount" class="badge">0</span>
     </div>
   </div>
 
   <nav id="menu" style="display:none">
-    <button onclick="openSec('prod')" class="admin">Stok</button>
+    <button class="admin" onclick="openSec('prod')">Stok</button>
     <button onclick="openSec('sale')">Shitje</button>
-    <button onclick="openSec('bil')" class="admin">Bilanc</button>
+    <button onclick="openSec('bil')">Bilanc</button>
     <button onclick="openSec('hist')">Historik</button>
     <button onclick="openSec('clients')">Klientët</button>
-    <button onclick="openSec('settings')" class="admin">Cilësimet</button>
+    <button class="admin" onclick="openSec('settings')">Cilësimet</button>
     <button onclick="logout()">Dil</button>
   </nav>
 </header>
 
 <section id="loginSec" class="active">
-  <div class="card" style="max-width:440px;margin:40px auto 0">
+  <div class="card" style="max-width:440px;margin:40px auto">
     <h3>Login</h3>
     <input id="u" placeholder="User" style="width:100%;margin-bottom:8px">
     <input id="p" type="password" placeholder="Password" style="width:100%;margin-bottom:8px">
     <button onclick="doLogin()">Hyr</button>
-    <p id="msg" style="color:red;margin:10px 0 0"></p>
+    <p id="msg" class="red"></p>
+    <p class="small">Admin: admin / admin<br>Kasier: kasier / kasier</p>
   </div>
 </section>
 
 <section id="prod">
   <div class="card admin">
     <h3>Shto Produkt</h3>
+
     <div class="row">
-      <input id="pn" placeholder="Emri" class="col">
-      <input id="pb" placeholder="Barkodi" class="col">
+      <input id="pn" class="col" placeholder="Emri">
+      <input id="pb" class="col" placeholder="Barkodi / Scanner USB">
     </div>
+
     <div class="row" style="margin-top:8px">
-      <input id="pp" type="number" placeholder="Çmimi (ALL)" class="col">
-      <input id="ps" type="number" placeholder="Sasia" class="col">
+      <select id="punit" class="col">
+        <option value="piece">Copë</option>
+        <option value="kg">Kilogram</option>
+      </select>
+      <input id="pp" class="col" type="number" min="0" step=".01" placeholder="Çmimi / Çmimi për kg">
+      <input id="ps" class="col" type="number" min="0" step=".001" placeholder="Stoku">
     </div>
+
     <div class="row" style="margin-top:8px">
-      <select id="pcat" class="col category-select">
+      <select id="pcat" class="col">
         <option value="ushqim">Ushqim</option>
         <option value="pije">Pije</option>
-        <option value="higjienike">Higjenike</option>
+        <option value="higjienike">Higjienike</option>
       </select>
       <input id="pexp" type="date" class="col">
-      <input id="pmin" type="number" class="col" placeholder="Min Stock">
+      <input id="pmin" type="number" min="0" step=".001" class="col" placeholder="Min Stock">
     </div>
-    <div style="margin-top:10px">
-      <button onclick="addProduct()">➕ Shto</button>
-      <button onclick="openCam('stock','environment')">📷 Mbrapa</button>
-      <button onclick="openCam('stock','user')">🤳 Para</button>
-    </div>
+
+    <button style="margin-top:10px" onclick="addProduct()">➕ Shto Produkt</button>
+    <p class="small">Për produktet me kg, çmimi është për 1 kg.</p>
   </div>
 
   <div class="card">
@@ -209,33 +159,35 @@
 </section>
 
 <section id="sale">
-  <div class="stats-grid" id="statsGrid"></div>
+  <div id="statsGrid" class="stats"></div>
 
   <div class="card">
     <div class="row">
-      <input id="saleScan" placeholder="Emër / Barkod / Scan USB" class="col">
-      <input id="client" placeholder="Emri i klientit (opsional)" class="col">
-      <input id="clientPhone" placeholder="Telefoni i klientit (opsional)" class="col">
+      <input id="saleScan" class="col" placeholder="Emër ose barkod / Skaner USB" autocomplete="off">
+      <input id="saleWeight" type="number" min=".001" step=".001" class="col" placeholder="Pesha në kg">
+      <input id="client" class="col" placeholder="Emri i klientit">
+      <input id="clientPhone" class="col" placeholder="Telefoni i klientit">
     </div>
 
-    <div class="row" style="margin-top:10px;align-items:center">
-      <div style="flex:1;min-width:160px">
-        <label class="small">Valuta e shitjes</label>
-        <select id="saleCurrency" onchange="recalc()" style="width:100%">
+    <div id="customerResults" class="results"></div>
+
+    <div class="row" style="margin-top:10px">
+      <div class="col">
+        <label class="small">Valuta</label>
+        <select id="saleCurrency" style="width:100%" onchange="recalc()">
           <option value="ALL">Lek (ALL)</option>
           <option value="EUR">Euro (EUR)</option>
         </select>
       </div>
 
-      <div style="flex:1;min-width:160px">
+      <div class="col">
         <label class="small">Shtesë (%)</label>
-        <input id="surcharge" type="number" placeholder="0" value="0" onchange="recalc()">
-        <div class="muted small">Shtesë e aplikueshme si % e totalit</div>
+        <input id="surcharge" type="number" min="0" step=".01" value="0" style="width:100%" oninput="recalc()">
       </div>
 
-      <div style="flex:1;min-width:160px">
-        <label class="small">Mënyra pagesës</label>
-        <select id="paymentMethod" onchange="recalc()" style="width:100%">
+      <div class="col">
+        <label class="small">Mënyra e pagesës</label>
+        <select id="paymentMethod" style="width:100%" onchange="paymentChanged()">
           <option value="cash_all">Cash (LEK)</option>
           <option value="card">Kartë</option>
           <option value="cash_eur">Cash (EUR)</option>
@@ -243,76 +195,112 @@
       </div>
     </div>
 
-    <div style="margin-top:10px">
-      <button onclick="manualAdd()">➕ Shto</button>
-      <button onclick="openCam('sale','environment')">📷 Mbrapa</button>
-      <button onclick="openCam('sale','user')">🤳 Para</button>
-    </div>
+    <button style="margin-top:10px" onclick="manualAdd()">➕ Shto në shportë</button>
+    <p class="small">Për produktet me kg vendos peshën para shtimit.</p>
   </div>
 
   <div class="card">
     <table id="saleTable"></table>
-    <h3>Total (ALL): <span id="tot">0</span> ALL</h3>
-    <div id="totInEur" class="small" style="margin-bottom:6px"></div>
 
-    <div class="loyalty-box">
+    <h3>Total: <span id="tot">0.00</span> ALL</h3>
+    <div id="totInEur" class="small"></div>
+
+    <div class="loyalty">
       <b>Programi Loyal</b>
-      <div id="loyaltyInfo" class="small">Vendos emrin ose telefonin e klientit për të parë pikët.</div>
+      <div id="loyaltyInfo" class="small"></div>
 
-      <div class="loyalty-balance">
-        <label style="display:block">
-          <input id="useLoyaltyPoints" type="checkbox" onchange="recalc()">
-          Përdor pikët e klientit
-        </label>
-      </div>
+      <label>
+        <input id="useLoyaltyPoints" type="checkbox" onchange="recalc()">
+        Përdor pikët e klientit
+      </label>
 
-      <div id="loyaltyDiscount" class="small" style="margin-top:8px"></div>
+      <div id="loyaltyDiscount" class="small"></div>
     </div>
 
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
-      <input id="paid" type="number" placeholder="Shuma nga klienti" style="flex:1;min-width:180px">
-      <div style="min-width:170px">
-        <button onclick="pay()">Paguaj</button>
-        <button class="secondary" onclick="cancel()">Anulo</button>
-      </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <input id="paid" type="number" min="0" step=".01" placeholder="Shuma nga klienti" style="flex:1;min-width:180px">
+      <button onclick="pay()">Paguaj</button>
+      <button class="secondary" onclick="cancelSale()">Anulo</button>
     </div>
 
-    <h3>Kusur / Mungesë: <span id="change">0</span></h3>
-    <div class="small">Kusuri gjithmonë përllogaritet dhe shfaqet në Lek (ALL).</div>
+    <h3>Kusur / Mungesë: <span id="change">0.00</span></h3>
   </div>
 </section>
 
-<section id="bil" class="admin">
+<section id="bil">
   <div class="card">
-    <h3>Bilanci Ditor</h3>
-    <p>Sistemi (ALL): <b><span id="daily">0</span> ALL</b></p>
-    <p>Sistemi (EUR): <b><span id="dailyEUR">0</span> EUR</b></p>
-    <p>Arka reale (ALL): <input id="cashRealALL" type="number" placeholder="Shuma reale ALL" style="width:160px"></p>
-    <p>Arka reale (EUR): <input id="cashRealEUR" type="number" placeholder="Shuma reale EUR" style="width:160px"></p>
-    <p class="small">(Përllogaritja e ndryshes tregon dif. në secilën valutë.)</p>
+    <h3>Hapja e Kasës</h3>
 
-    <div style="margin-top:10px">
-      <label class="small">Kursi i këmbimit (1 EUR = ? ALL)</label>
-      <input id="exchangeRateInput" type="number" step="0.01" placeholder="100" style="width:160px">
-      <button onclick="saveExchangeRate()">Ruaj Kurs</button>
-      <div class="small" style="margin-top:8px">
-        <input id="forceDailyRate" type="checkbox"> Të kërkohet përditësimi i kursit çdo ditë
+    <p class="small">
+      Thyerja fillestare përdoret për kusur dhe nuk konsiderohet shitje.
+    </p>
+
+    <div class="row">
+      <div class="col">
+        <label class="small">Thyerja fillestare (ALL)</label>
+        <input id="openingFloatInput" type="number" min="0" step=".01" placeholder="P.sh. 10000" style="width:100%">
+      </div>
+
+      <div class="col">
+        <label class="small">Statusi</label>
+        <div id="kasaStatus" class="red" style="padding:10px 0">Kasa e mbyllur</div>
+      </div>
+
+      <div class="col">
+        <label class="small">Thyerja aktive</label>
+        <div style="padding:10px 0"><b><span id="activeFloat">0.00</span> ALL</b></div>
       </div>
     </div>
 
-    <div style="margin-top:12px">
-      <button onclick="closeDay()">Mbyll Ditën</button>
+    <button style="margin-top:10px" onclick="openKasa()">Hap Kasa</button>
+  </div>
+
+  <div class="card">
+    <h3>Bilanci i Arkës</h3>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Cash ALL Neto</div><div class="stat-value"><span id="cashBalanceALL">0.00</span> ALL</div></div>
+      <div class="stat"><div class="stat-label">Kartë</div><div class="stat-value"><span id="cardBalanceALL">0.00</span> ALL</div></div>
+      <div class="stat"><div class="stat-label">Cash EUR</div><div class="stat-value"><span id="cashBalanceEUR">0.00</span> EUR</div></div>
+      <div class="stat"><div class="stat-label">Thyerja</div><div class="stat-value"><span id="activeFloatCard">0.00</span> ALL</div></div>
     </div>
+
+    <p>Cash ALL Neto: <b><span id="daily">0.00</span> ALL</b></p>
+    <p>Kartë: <b><span id="dailyCard">0.00</span> ALL</b></p>
+    <p>Cash EUR: <b><span id="dailyEUR">0.00</span> EUR</b></p>
+
+    <hr>
+
+    <p>Arka reale Cash ALL:
+      <input id="cashRealALL" type="number" min="0" step=".01" style="width:170px">
+    </p>
+
+    <p>Arka reale Cash EUR:
+      <input id="cashRealEUR" type="number" min="0" step=".01" style="width:170px">
+    </p>
+
+    <p class="small">
+      Në pagesat EUR, eurot futen në Cash EUR dhe kusuri në ALL
+      zbritet nga Cash ALL.
+    </p>
+
+    <p>
+      Kursi:
+      <input id="exchangeRateInput" type="number" min=".0001" step=".01" style="width:130px">
+      ALL për 1 EUR
+      <button onclick="saveExchangeRate()">Ruaj</button>
+    </p>
+
+    <button onclick="closeDay()">Mbyll Ditën</button>
+    <button class="secondary" onclick="exportDailyClosuresExcel()">📊 Eksporto Bilancet Ditore</button>
   </div>
 </section>
 
 <section id="hist">
   <div class="card">
     <h3>Historiku i Shitjeve</h3>
-    <div style="margin-bottom:10px">
-      <button onclick="exportCSV()">⬇️ Eksporto CSV</button>
-      <button class="secondary" onclick="clearOld()">🧹 Fshi të gjitha (lokal)</button>
-    </div>
+    <button onclick="exportCSV()">⬇️ Eksporto CSV</button>
+    <button class="secondary" onclick="clearOld()">🧹 Fshi Historikun</button>
     <table id="histTable"></table>
   </div>
 </section>
@@ -320,1458 +308,2064 @@
 <section id="clients">
   <div class="card">
     <h3>Klientët Loyal</h3>
-    <div class="row" style="margin-bottom:10px">
-      <input id="clientSearch" class="col" placeholder="Kërko sipas emri ose telefoni">
+
+    <div class="row">
+      <input id="clientSearch" class="col" placeholder="Kërko me emër ose telefon">
       <button onclick="renderLoyaltyTable()">Kërko</button>
       <button class="secondary" onclick="resetClientFilter()">Pastro</button>
     </div>
 
-    <div class="report-box">
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button onclick="exportLoyaltyData()">⬇️ Eksporto Klientët</button>
-        <button class="secondary" onclick="backupData()">💾 Backup JSON</button>
-        <button class="secondary" onclick="restoreData()">📥 Restore JSON</button>
-      </div>
+    <div style="margin-top:12px">
+      <button onclick="exportLoyaltyData()">⬇️ Eksporto Klientët</button>
+      <button class="secondary" onclick="backupData()">💾 Backup</button>
+      <button class="secondary" onclick="restoreData()">📥 Restore</button>
     </div>
 
     <table id="loyaltyTable"></table>
   </div>
 </section>
 
-<section id="settings" class="admin">
-  <div class="card">
+<section id="settings">
+  <div class="card admin">
     <h3>Cilësimet</h3>
-    <p class="small">Ndrysho parametrat e riporositjes dhe kontrollit të skadencave.</p>
 
     <div class="row">
-      <div class="col">
-        <label class="small">LeadDays</label>
-        <input id="cfg_leadDays" type="number" value="3">
-      </div>
-      <div class="col">
-        <label class="small">ReviewDays</label>
-        <input id="cfg_reviewDays" type="number" value="7">
-      </div>
-      <div class="col">
-        <label class="small">Safety factor</label>
-        <input id="cfg_safety" type="number" step="0.1" value="1.5">
-      </div>
+      <input id="cfg_leadDays" class="col" type="number" min="1" value="3">
+      <input id="cfg_reviewDays" class="col" type="number" min="1" value="7">
+      <input id="cfg_safety" class="col" type="number" min=".1" step=".1" value="1.5">
     </div>
 
-    <div style="margin-top:10px">
-      <button onclick="saveSettings()">Ruaj Cilësimet</button>
-    </div>
+    <button style="margin-top:10px" onclick="saveSettings()">Ruaj Cilësimet</button>
   </div>
 </section>
 
-<div class="modal" id="alertsModal">
+<div id="alertsModal" class="modal">
   <div class="modal-content">
-    <h3>Alarmet e Inventarit</h3>
+    <h3>Alarmet</h3>
     <div id="alertsBody"></div>
-    <div style="margin-top:12px;text-align:right">
-      <button class="secondary" onclick="closeAlertsModal()">Mbyll</button>
-    </div>
+    <button class="secondary" onclick="closeAlertsModal()">Mbyll</button>
   </div>
 </div>
 
-<div class="modal" id="cam">
-  <div class="modal-content">
-    <h3>Scan Barcode</h3>
-    <div id="scanner"></div>
-    <div style="margin-top:12px;text-align:right">
-      <button id="camCloseBtn" class="secondary">Mbyll</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="viewModal">
+<div id="viewModal" class="modal">
   <div class="modal-content">
     <h3>Detajet e Shitjes</h3>
     <div id="viewBody"></div>
-    <div style="margin-top:12px">
-      <input id="settleAmount" type="number" placeholder="Shuma për të shlyer (ALL)">
-      <button onclick="settleDebt()">Shlyej Borxh</button>
-      <button class="secondary" onclick="closeView()">Mbyll</button>
-    </div>
+    <input id="settleAmount" type="number" min="0" step=".01" placeholder="Shlyerje ALL">
+    <button onclick="settleDebt()">Shlyej Borxh</button>
+    <button class="secondary" onclick="closeView()">Mbyll</button>
   </div>
 </div>
 
-<div class="modal" id="txnModal">
-  <div class="modal-content small-modal">
-    <h4 id="txnTitle">Transaksioni</h4>
-    <div id="txnMsg" class="small"></div>
-    <div style="margin-top:12px;text-align:right">
-      <button class="secondary" onclick="closeTxn()">Mbyll</button>
-    </div>
+<div id="txnModal" class="modal">
+  <div class="modal-content">
+    <h3 id="txnTitle"></h3>
+    <div id="txnMsg"></div>
+    <button class="secondary" onclick="closeTxn()">Mbyll</button>
   </div>
 </div>
+
+<div id="printArea" style="display:none"></div>
 
 <script>
-/* ========= SECURE HASH + USERS ========= */
-function hashTextSync(value){
-  const encoder = new TextEncoder();
-  const data = encoder.encode(String(value));
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    hash = ((hash << 5) - hash + data[i]) >>> 0;
-  }
-  let hex = hash.toString(16);
-  while (hex.length < 8) hex = '0' + hex;
-  return hex;
+'use strict';
+
+/* ================= HELPERS ================= */
+
+const $ = id => document.getElementById(id);
+
+function parse(value,fallback){
+  try{return JSON.parse(value) ?? fallback}
+  catch(error){return fallback}
 }
 
-async function sha256(value){
-  const str = String(value);
-  if (window.crypto && crypto.subtle && window.isSecureContext) {
-    try{
-      const utf8 = new TextEncoder().encode(str);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
-    }catch(e){}
-  }
-  return hashTextSync(str);
+function num(value,fallback=0){
+  const n=Number(value);
+  return Number.isFinite(n)?n:fallback;
 }
 
-async function getStoredUsers(){
-  const raw = localStorage.getItem('posUsers');
-  if(!raw){
-    const defaults = [
-      { u:'admin', p: await sha256('admin'), r:'admin' },
-      { u:'kasier', p: await sha256('kasier'), r:'kasier' }
-    ];
-    localStorage.setItem('posUsers', JSON.stringify(defaults));
-    return defaults;
-  }
-  try{
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  }catch{
-    return [];
-  }
+function money(value){
+  return num(value).toFixed(2);
 }
 
-async function verifyLogin(username, password){
-  const users = await getStoredUsers();
-  const hashed = await sha256(password);
-  return users.find(u => u.u === username && u.p === hashed) || null;
+function clean(value){
+  return String(value??'').trim();
 }
 
-async function ensureDefaultUsers(){
-  const raw = localStorage.getItem('posUsers');
-  if(!raw){
-    const defaults = [
-      { u:'admin', p: await sha256('admin'), r:'admin' },
-      { u:'kasier', p: await sha256('kasier'), r:'kasier' }
-    ];
-    localStorage.setItem('posUsers', JSON.stringify(defaults));
-  }
+function normalized(value){
+  return clean(value).toLowerCase().replace(/\s+/g,' ');
 }
 
-/* ========= HELPERS ========= */
-function safeParse(str, fallback){
-  try { return JSON.parse(str); } catch (e) { return fallback; }
-}
-function safeNumber(value, fallback = 0){
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-function round2(value){
-  return Math.round((Number(value) || 0) * 100) / 100;
-}
-function escapeHtml(str){
-  return String(str ?? '').replace(/[&<>"']/g, s => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[s]));
-}
-function formatMoney(num){
-  return round2(num).toFixed(2);
-}
-function getLocalDateStr(iso){
-  const d = new Date(iso);
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function daysBetween(a,b){
-  return Math.ceil((b.getTime()-a.getTime())/(24*60*60*1000));
-}
-function normalizeLoyaltyValue(value){
-  return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
-}
-function stableString(value){
-  return String(value ?? '').trim();
+function esc(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;',
+    '"':'&quot;',"'":'&#39;'
+  }[c]));
 }
 
-/* ========= STATE ========= */
-let role = 'guest';
-let products = safeParse(localStorage.getItem('p'), []);
-let sales = [];
-let salesHistory = safeParse(localStorage.getItem('salesHistory'), []);
-let daily = safeNumber(localStorage.getItem('daily'), 0);
-let eurInRegister = safeNumber(localStorage.getItem('eurInRegister'), 0);
+function csvCell(value){
+  return `"${String(value??'').replace(/"/g,'""')}"`;
+}
 
-let reorderConfig = safeParse(localStorage.getItem('reorderCfg'), {
-  leadDays:3,
-  reviewPeriodDays:7,
-  safetyStockFactor:1.5,
-  minOrderQty:1
+function localDate(value){
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime()))return '';
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+
+function dateTime(value){
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())
+    ? '--'
+    : date.toLocaleString('sq-AL');
+}
+
+function signedMoney(value){
+  const n=num(value);
+  return n>0 ? `+${money(n)}` : n<0 ? `-${money(Math.abs(n))}` : '0.00';
+}
+
+function downloadFile(filename,content,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),500);
+}
+
+/* ================= STATE ================= */
+
+const users=[
+  {u:'admin',p:'admin',r:'admin'},
+  {u:'kasier',p:'kasier',r:'kasier'}
+];
+
+const POINTS_PER_ALL=100;
+const ALL_PER_POINT=1;
+
+let role='guest';
+let products=parse(localStorage.getItem('p'),[]);
+let cart=[];
+let salesHistory=parse(localStorage.getItem('salesHistory'),[]);
+let loyaltyCustomers=parse(localStorage.getItem('loyaltyCustomers'),{});
+
+let cashALL=num(localStorage.getItem('cashALL'),num(localStorage.getItem('daily'),0));
+let cardALL=num(localStorage.getItem('cardALL'),num(localStorage.getItem('cardBalanceALL'),0));
+let cashEUR=num(localStorage.getItem('cashEUR'),num(localStorage.getItem('eurInRegister'),0));
+
+let openingFloatALL=num(localStorage.getItem('openingFloatALL'),0);
+let kasaOpenedAt=localStorage.getItem('kasaOpenedAt')||'';
+let exchangeRate=Math.max(.0001,num(localStorage.getItem('exchangeRate'),100));
+
+let reorderConfig=parse(localStorage.getItem('reorderCfg'),{
+  leadDays:3,reviewPeriodDays:7,safetyStockFactor:1.5,minOrderQty:1
 });
 
-let exchangeRate = safeNumber(localStorage.getItem('exchangeRate'), 100.00);
-let forceDailyRate = localStorage.getItem('forceDailyRate') === '1';
+let currentSaleIndex=null;
 
-let loyaltyCustomers = safeParse(localStorage.getItem('loyaltyCustomers'), {});
-const POINTS_PER_ALL = 100;
-const ALL_PER_POINT = 1;
+/* ================= STORAGE ================= */
 
-let scanTarget = null;
-let camMode = 'environment';
-let quaggaHandler = null;
-let quaggaRunning = false;
-let quaggaDebounce = false;
+function save(){
+  localStorage.setItem('p',JSON.stringify(products));
+  localStorage.setItem('salesHistory',JSON.stringify(salesHistory));
+  localStorage.setItem('loyaltyCustomers',JSON.stringify(loyaltyCustomers));
 
-/* ========= ELEMENTS ========= */
-const alertCountEl = document.getElementById('alertCount');
-const alertsModal = document.getElementById('alertsModal');
-const alertsBody = document.getElementById('alertsBody');
-const camEl = document.getElementById('cam');
-const scannerEl = document.getElementById('scanner');
-const camCloseBtn = document.getElementById('camCloseBtn');
-const saleScanEl = document.getElementById('saleScan');
-const paidEl = document.getElementById('paid');
-const totEl = document.getElementById('tot');
-const totInEurEl = document.getElementById('totInEur');
-const changeEl = document.getElementById('change');
-const prodTableEl = document.getElementById('prodTable');
-const saleTableEl = document.getElementById('saleTable');
-const histTableEl = document.getElementById('histTable');
-const loyalTableEl = document.getElementById('loyaltyTable');
-const dailyEl = document.getElementById('daily');
-const dailyEurEl = document.getElementById('dailyEUR');
-const cashRealALLEl = document.getElementById('cashRealALL');
-const cashRealEUREl = document.getElementById('cashRealEUR');
-const exchangeRateInput = document.getElementById('exchangeRateInput');
-const forceDailyRateEl = document.getElementById('forceDailyRate');
-const viewModalEl = document.getElementById('viewModal');
-const settleAmountEl = document.getElementById('settleAmount');
-const txnModalEl = document.getElementById('txnModal');
-const txnMsgEl = document.getElementById('txnMsg');
-const txnTitleEl = document.getElementById('txnTitle');
+  localStorage.setItem('cashALL',String(cashALL));
+  localStorage.setItem('cardALL',String(cardALL));
+  localStorage.setItem('cashEUR',String(cashEUR));
 
-const uEl = document.getElementById('u');
-const pEl = document.getElementById('p');
-const msgEl = document.getElementById('msg');
-const clientEl = document.getElementById('client');
-const clientPhoneEl = document.getElementById('clientPhone');
-const loyaltyInfoEl = document.getElementById('loyaltyInfo');
-const useLoyaltyPointsEl = document.getElementById('useLoyaltyPoints');
-const loyaltyDiscountEl = document.getElementById('loyaltyDiscount');
-const statsGridEl = document.getElementById('statsGrid');
-const clientSearchEl = document.getElementById('clientSearch');
+  localStorage.setItem('daily',String(cashALL));
+  localStorage.setItem('cardBalanceALL',String(cardALL));
+  localStorage.setItem('eurInRegister',String(cashEUR));
 
-function sanitizeProduct(obj){
-  if(!obj || typeof obj !== 'object') return null;
+  localStorage.setItem('openingFloatALL',String(openingFloatALL));
+  localStorage.setItem('kasaOpenedAt',kasaOpenedAt);
+  localStorage.setItem('exchangeRate',String(exchangeRate));
+  localStorage.setItem('reorderCfg',JSON.stringify(reorderConfig));
+}
+
+/* ================= NORMALIZATION ================= */
+
+function productData(product){
   return {
-    n: stableString(obj.n || 'Pa emër'),
-    b: stableString(obj.b || ''),
-    p: Math.max(0, safeNumber(obj.p, 0)),
-    s: Math.max(0, safeNumber(obj.s, 0)),
-    category: obj.category || 'ushqim',
-    expiry: obj.expiry || '',
-    minStock: Math.max(0, safeNumber(obj.minStock, 0))
+    n:clean(product.n||'Pa emër'),
+    b:clean(product.b||''),
+    unit:product.unit==='kg'?'kg':'piece',
+    p:Math.max(0,num(product.p)),
+    s:Math.max(0,num(product.s)),
+    category:['ushqim','pije','higjienike'].includes(product.category)
+      ? product.category
+      : 'ushqim',
+    expiry:/^\d{4}-\d{2}-\d{2}$/.test(product.expiry||'')
+      ? product.expiry
+      : '',
+    minStock:Math.max(0,num(product.minStock??product.min))
   };
 }
 
-function normalizeProducts(){
-  products = products.map(sanitizeProduct).filter(Boolean);
-  localStorage.setItem('p', JSON.stringify(products));
-}
+products=Array.isArray(products)?products.map(productData):[];
 
-/* ========= AUTH ========= */
-async function doLogin(){
-  const username = (uEl.value || '').trim();
-  const password = (pEl.value || '').trim();
-  if(!username || !password){ msgEl.textContent = 'Shkruaj user dhe password'; return; }
+/* ================= AUTH ================= */
 
-  await ensureDefaultUsers();
-  const user = await verifyLogin(username, password);
-  if(!user){ msgEl.textContent = 'Gabim login'; return; }
+function doLogin(){
+  const user=users.find(item=>
+    item.u===clean($('u').value)&&
+    item.p===clean($('p').value)
+  );
 
-  role = user.r;
-  document.getElementById('loginSec').style.display = 'none';
-  document.getElementById('menu').style.display = 'block';
-  document.querySelectorAll('.admin').forEach(el => {
-    el.style.display = role === 'admin' ? 'inline-block' : 'none';
+  if(!user){
+    $('msg').textContent='Gabim login.';
+    return;
+  }
+
+  role=user.r;
+  $('loginSec').style.display='none';
+  $('menu').style.display='flex';
+
+  document.querySelectorAll('.admin').forEach(element=>{
+    element.style.display=role==='admin'
+      ? element.tagName==='SECTION'?'block':'inline-block'
+      :'none';
   });
 
   openSec('sale');
-  normalizeProducts();
-  renderProducts();
-  renderHistory();
-  renderStats();
-  renderLoyaltyTable();
-  checkAlerts();
+  renderAll();
 }
 
-function logout(){ location.reload(); }
+function logout(){
+  location.reload();
+}
+
 function openSec(id){
-  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-  const target = document.getElementById(id);
-  if(target) target.classList.add('active');
+  document.querySelectorAll('section').forEach(section=>{
+    section.classList.remove('active');
+  });
+
+  $(id)?.classList.add('active');
 }
 
-/* ========= DASHBOARD ========= */
-function renderStats(){
-  const todayDate = getLocalDateStr(new Date().toISOString());
-  const todaySales = salesHistory.filter(r => getLocalDateStr(r.timestamp) === todayDate);
-  const totalToday = todaySales.reduce((sum, r) => sum + Number(r.totalAll || 0), 0);
-  const totalProducts = products.length;
-  const lowStock = products.filter(p => Number(p.s || 0) <= Number(p.minStock || 0)).length;
-  const expired = products.filter(p => {
-    if(!p.expiry) return false;
-    const expDate = new Date(p.expiry + 'T23:59:59');
-    return expDate < new Date();
-  }).length;
-
-  statsGridEl.innerHTML = [
-    { label:'Shitjet e sotme', value:`${formatMoney(totalToday)} ALL` },
-    { label:'Produkte', value:String(totalProducts) },
-    { label:'Low stock', value:String(lowStock) },
-    { label:'Skaduar', value:String(expired) }
-  ].map(s => `
-    <div class="stat-box">
-      <div class="stat-label">${s.label}</div>
-      <div class="stat-value">${s.value}</div>
-    </div>
-  `).join('');
-}
-
-/* ========= PRODUCTS ========= */
-function storeProducts(){
-  normalizeProducts();
-  renderProducts();
-  renderStats();
-  checkAlerts();
-}
+/* ================= PRODUCTS ================= */
 
 function addProduct(){
-  const obj = {
-    n: stableString(document.getElementById('pn').value || 'Pa emër'),
-    b: stableString(document.getElementById('pb').value || ''),
-    p: safeNumber(document.getElementById('pp').value, 0),
-    s: safeNumber(document.getElementById('ps').value, 0),
-    category: document.getElementById('pcat').value || 'ushqim',
-    expiry: document.getElementById('pexp').value || '',
-    minStock: safeNumber(document.getElementById('pmin').value, 0)
-  };
+  const product=productData({
+    n:$('pn').value,
+    b:$('pb').value,
+    unit:$('punit').value,
+    p:$('pp').value,
+    s:$('ps').value,
+    category:$('pcat').value,
+    expiry:$('pexp').value,
+    minStock:$('pmin').value
+  });
 
-  if(!obj.b){ alert('Barkodi është i kërkuar.'); return; }
-  if(obj.p < 0 || obj.s < 0 || obj.minStock < 0){ alert('Çmimi, sasia dhe min stock duhet të jenë pozitive ose zero.'); return; }
+  if(!product.n||!product.b){
+    alert('Emri dhe barkodi janë të detyrueshëm.');
+    return;
+  }
 
-  const duplicate = products.some(item => String(item.b).trim() === String(obj.b).trim());
-  if(duplicate){ alert('Barkodi ekziston tashmë.'); return; }
+  if(products.some(item=>item.b===product.b)){
+    alert('Ky barkod ekziston.');
+    return;
+  }
 
-  products.push(obj);
-  storeProducts();
+  products.push(product);
+  save();
 
-  document.getElementById('pn').value = '';
-  document.getElementById('pb').value = '';
-  document.getElementById('pp').value = '';
-  document.getElementById('ps').value = '';
-  document.getElementById('pexp').value = '';
-  document.getElementById('pmin').value = '';
-  document.getElementById('pcat').value = 'ushqim';
+  ['pn','pb','pp','ps','pexp','pmin']
+    .forEach(id=>$(id).value='');
+
+  $('punit').value='piece';
+  $('pcat').value='ushqim';
+  renderAll();
+}
+
+function updateProduct(index,field,value){
+  const product=products[index];
+  if(!product)return;
+
+  if(['n','b','expiry'].includes(field)){
+    product[field]=clean(value);
+  }
+
+  if(field==='unit'){
+    product.unit=value==='kg'?'kg':'piece';
+  }
+
+  if(['p','s','minStock'].includes(field)){
+    product[field]=Math.max(0,num(value));
+  }
+
+  if(field==='category'){
+    product.category=value;
+  }
+
+  if(field==='b'&&products.some((item,itemIndex)=>
+    itemIndex!==index&&item.b===product.b
+  )){
+    alert('Ky barkod ekziston te një produkt tjetër.');
+    renderProducts();
+    return;
+  }
+
+  save();
+  renderAll();
+}
+
+function deleteProduct(index){
+  if(!products[index])return;
+
+  if(!confirm(`Fshi produktin "${products[index].n}"?`)){
+    return;
+  }
+
+  products.splice(index,1);
+  save();
+  renderAll();
 }
 
 function renderProducts(){
-  prodTableEl.innerHTML = `
+  $('prodTable').innerHTML=`
     <tr>
-      <th>Emër</th><th>Barkod</th><th>Çmim (ALL)</th><th>Stok</th><th>MinStock</th>
-      <th>Kategori</th><th>Skadenca</th><th>Alarm</th><th>❌</th>
+      <th>Emër</th><th>Barkod</th><th>Njësia</th>
+      <th>Çmimi</th><th>Stok</th><th>Min</th>
+      <th>Kategori</th><th>Skadenca</th><th>Alarm</th><th>Fshi</th>
     </tr>
   `;
 
-  const today = new Date();
-  products.forEach((p,i)=>{
-    let alarmHtml = '';
-    let rowClass = '';
+  const today=new Date();
 
-    if(p.expiry){
-      const expDate = new Date(p.expiry + 'T23:59:59');
-      if(expDate < today){
-        alarmHtml += `<span class="danger-text" title="Skaduar">Skaduar</span>`;
-        rowClass = 'expired';
-      } else {
-        const days = daysBetween(today, expDate);
-        if(days <= 7){
-          alarmHtml += `<span class="warn" title="Skadon brenda ${days} ditëve">Skadon (${days}d)</span>`;
-          if(!rowClass) rowClass = 'expiring';
+  products.forEach((product,index)=>{
+    let rowClass='';
+    let alarm='';
+
+    if(product.expiry){
+      const expiry=new Date(product.expiry+'T23:59:59');
+
+      if(expiry<today){
+        rowClass='expired';
+        alarm='<span class="red">Skaduar</span>';
+      }else{
+        const days=Math.ceil((expiry.getTime()-today.getTime())/86400000);
+
+        if(days<=7){
+          rowClass='expiring';
+          alarm=`<span class="warn">Skadon ${days}d</span>`;
         }
       }
     }
 
-    if(Number(p.s || 0) <= Number(p.minStock || 0)){
-      alarmHtml += (alarmHtml ? ' • ' : '') + `<span class="danger-text" title="Stock i ulët">Stock i ulët</span>`;
-      rowClass = rowClass || 'lowstock';
+    if(product.s<=product.minStock){
+      rowClass=rowClass||'lowstock';
+      alarm+=(alarm?' • ':'')+'<span class="red">Stok i ulët</span>';
     }
 
-    prodTableEl.innerHTML += `
-      <tr class="${rowClass || ''}">
-        <td><input value="${escapeHtml(p.n || '')}" onchange="products[${i}].n=this.value;storeProducts()"></td>
-        <td><input value="${escapeHtml(p.b || '')}" onchange="products[${i}].b=this.value.trim();storeProducts()"></td>
-        <td><input type="number" value="${Number(p.p || 0)}" onchange="products[${i}].p=Math.max(0,safeNumber(this.value,0));storeProducts()"></td>
-        <td><input type="number" value="${Number(p.s || 0)}" onchange="products[${i}].s=Math.max(0,safeNumber(this.value,0));storeProducts()"></td>
-        <td><input type="number" value="${Number(p.minStock || 0)}" onchange="products[${i}].minStock=Math.max(0,safeNumber(this.value,0));storeProducts()"></td>
+    $('prodTable').insertAdjacentHTML('beforeend',`
+      <tr class="${rowClass}">
+        <td><input value="${esc(product.n)}" onchange="updateProduct(${index},'n',this.value)"></td>
+        <td><input value="${esc(product.b)}" onchange="updateProduct(${index},'b',this.value)"></td>
         <td>
-          <select onchange="products[${i}].category=this.value;storeProducts()" class="category-select">
-            <option value="ushqim" ${p.category === 'ushqim' ? 'selected' : ''}>Ushqim</option>
-            <option value="pije" ${p.category === 'pije' ? 'selected' : ''}>Pije</option>
-            <option value="higjienike" ${p.category === 'higjienike' ? 'selected' : ''}>Higjenike</option>
+          <select onchange="updateProduct(${index},'unit',this.value)">
+            <option value="piece" ${product.unit==='piece'?'selected':''}>Copë</option>
+            <option value="kg" ${product.unit==='kg'?'selected':''}>Kg</option>
           </select>
         </td>
-        <td><input type="date" value="${p.expiry || ''}" onchange="products[${i}].expiry=this.value;storeProducts()"></td>
-        <td>${alarmHtml || '<span class=\"muted\">—</span>'}</td>
-        <td><button class="danger" onclick="products.splice(${i},1);storeProducts();">🗑️</button></td>
+        <td><input type="number" min="0" step=".01" value="${product.p}" onchange="updateProduct(${index},'p',this.value)"></td>
+        <td><input type="number" min="0" step=".001" value="${product.s}" onchange="updateProduct(${index},'s',this.value)"></td>
+        <td><input type="number" min="0" step=".001" value="${product.minStock}" onchange="updateProduct(${index},'minStock',this.value)"></td>
+        <td>
+          <select onchange="updateProduct(${index},'category',this.value)">
+            <option value="ushqim" ${product.category==='ushqim'?'selected':''}>Ushqim</option>
+            <option value="pije" ${product.category==='pije'?'selected':''}>Pije</option>
+            <option value="higjienike" ${product.category==='higjienike'?'selected':''}>Higjienike</option>
+          </select>
+        </td>
+        <td><input type="date" value="${product.expiry}" onchange="updateProduct(${index},'expiry',this.value)"></td>
+        <td>${alarm||'—'}</td>
+        <td><button class="danger" onclick="deleteProduct(${index})">🗑️</button></td>
       </tr>
-    `;
+    `);
   });
 }
 
-/* ========= ALERTS ========= */
-function checkAlerts(){
-  const alerts = [];
-  const today = new Date();
+/* ================= DASHBOARD ================= */
 
-  products.forEach(p=>{
-    if(Number(p.s || 0) <= Number(p.minStock || 0)){
-      alerts.push({ type:'lowstock', product:p, msg:`Stoku i produktit "${p.n}" (barkod: ${p.b}) është në/poshtë minStock (${p.s} ≤ ${p.minStock}).` });
+function renderStats(){
+  const today=localDate(new Date());
+
+  const records=salesHistory.filter(record=>
+    localDate(record.timestamp)===today
+  );
+
+  const total=records.reduce(
+    (sum,record)=>sum+num(record.totalAll),
+    0
+  );
+
+  const low=products.filter(product=>
+    product.s<=product.minStock
+  ).length;
+
+  const expired=products.filter(product=>
+    product.expiry&&
+    new Date(product.expiry+'T23:59:59')<new Date()
+  ).length;
+
+  $('statsGrid').innerHTML=[
+    ['Shitje sot',`${money(total)} ALL`],
+    ['Produkte',products.length],
+    ['Stok i ulët',low],
+    ['Skaduar',expired]
+  ].map(item=>`
+    <div class="stat">
+      <div class="stat-label">${item[0]}</div>
+      <div class="stat-value">${item[1]}</div>
+    </div>
+  `).join('');
+}
+
+/* ================= ALERTS ================= */
+
+function getAlerts(){
+  const result=[];
+  const now=new Date();
+
+  products.forEach(product=>{
+    if(product.s<=product.minStock){
+      result.push(`Stok i ulët: ${product.n}`);
     }
-    if(p.expiry){
-      const expDate = new Date(p.expiry + 'T23:59:59');
-      const days = daysBetween(today, expDate);
-      if(expDate < today){
-        alerts.push({ type:'expired', product:p, msg:`Produkti "${p.n}" (barkod: ${p.b}) ka skaduar më ${p.expiry}.` });
-      } else if(days <= 7){
-        alerts.push({ type:'expiring', product:p, msg:`Produkti "${p.n}" (barkod: ${p.b}) skadon në ${days} ditë (${p.expiry}).` });
+
+    if(product.expiry){
+      const expiry=new Date(product.expiry+'T23:59:59');
+      const days=Math.ceil((expiry.getTime()-now.getTime())/86400000);
+
+      if(expiry<now){
+        result.push(`Skaduar: ${product.n}`);
+      }else if(days<=7){
+        result.push(`Skadon së shpejti: ${product.n} (${days} ditë)`);
       }
     }
   });
 
-  alertCountEl.textContent = alerts.length;
-  window.lastInventoryAlerts = alerts;
-  return alerts;
+  return result;
+}
+
+function checkAlerts(){
+  $('alertCount').textContent=getAlerts().length;
 }
 
 function openAlertsModal(){
-  const alerts = checkAlerts();
-  alertsBody.innerHTML = '';
-  if(!alerts.length){
-    alertsBody.innerHTML = '<div>Nuk ka alarme.</div>';
-    alertsModal.style.display = 'block';
-    return;
-  }
+  const alerts=getAlerts();
 
-  let html = '<ul>';
-  alerts.forEach(a=>{
-    const barcode = String((a.product && a.product.b) || '');
-    html += `<li><b>${escapeHtml(a.type.toUpperCase())}</b>: ${escapeHtml(a.msg)} <button style="margin-left:8px" onclick="openProdAndHighlight('${escapeHtml(barcode)}')">Shiko</button></li>`;
-  });
-  html += '</ul>';
-  alertsBody.innerHTML = html;
-  alertsModal.style.display = 'block';
-}
-function closeAlertsModal(){ alertsModal.style.display = 'none'; }
-function openProdAndHighlight(barcode){
-  closeAlertsModal();
-  openSec('prod');
-  setTimeout(()=>{
-    renderProducts();
-    const rows = prodTableEl.querySelectorAll('tr');
-    for(const r of rows){
-      if(r.innerText.includes(barcode)){
-        r.style.transition = 'background 0.3s';
-        r.style.background = '#fffbeb';
-        setTimeout(()=>r.style.background='',2500);
-        r.scrollIntoView({ behavior:'smooth', block:'center' });
-        break;
-      }
-    }
-  }, 200);
+  $('alertsBody').innerHTML=alerts.length
+    ? `<ul>${alerts.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`
+    : '<p>Nuk ka alarme.</p>';
+
+  $('alertsModal').style.display='block';
 }
 
-/* ========= LOYALTY ========= */
-function getLoyaltyKey(){
-  const name = normalizeLoyaltyValue(clientEl.value);
-  const phone = normalizeLoyaltyValue(clientPhoneEl.value);
-  if(!name && !phone) return '';
+function closeAlertsModal(){
+  $('alertsModal').style.display='none';
+}
+
+/* ================= LOYALTY ================= */
+
+function customerKey(){
+  const name=normalized($('client').value);
+  const phone=normalized($('clientPhone').value);
+
+  if(!name&&!phone)return '';
   return `${name}|${phone}`;
 }
 
-function getLoyaltyCustomer(){
-  const key = getLoyaltyKey();
-  if(!key) return null;
-  if(!loyaltyCustomers[key]){
-    loyaltyCustomers[key] = {
+function getCustomer(create=true){
+  const key=customerKey();
+
+  if(!key)return null;
+
+  if(!loyaltyCustomers[key]&&create){
+    loyaltyCustomers[key]={
       key,
-      name: stableString(clientEl.value),
-      phone: stableString(clientPhoneEl.value),
-      points: 0,
-      totalSpentALL: 0,
-      transactions: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      name:clean($('client').value),
+      phone:clean($('clientPhone').value),
+      points:0,
+      totalEarned:0,
+      totalUsed:0,
+      totalSpentALL:0,
+      transactions:0,
+      createdAt:new Date().toISOString(),
+      updatedAt:new Date().toISOString()
     };
   }
-  return loyaltyCustomers[key];
+
+  return loyaltyCustomers[key]||null;
 }
 
-function saveLoyaltyCustomers(){
-  localStorage.setItem('loyaltyCustomers', JSON.stringify(loyaltyCustomers));
+function calculateEarnedPoints(amount){
+  return Math.floor(
+    Math.max(0,num(amount))/POINTS_PER_ALL
+  );
 }
 
-function calculateEarnedPoints(amountPaidALL){
-  return Math.floor(Math.max(0, amountPaidALL) / POINTS_PER_ALL);
-}
+function loyaltyDiscount(total){
+  if(!$('useLoyaltyPoints').checked){
+    return {amount:0,used:0};
+  }
 
-function calculateLoyaltyDiscount(totalBeforeDiscount){
-  if(!useLoyaltyPointsEl.checked) return { discountALL:0, pointsUsed:0 };
-  const customer = getLoyaltyCustomer();
-  if(!customer || customer.points <= 0) return { discountALL:0, pointsUsed:0 };
-  const maximumDiscount = customer.points * ALL_PER_POINT;
-  const discountALL = Math.min(maximumDiscount, totalBeforeDiscount);
-  const pointsUsed = Math.ceil(discountALL / ALL_PER_POINT);
-  return { discountALL: round2(discountALL), pointsUsed };
+  const customer=getCustomer();
+
+  if(!customer||customer.points<=0){
+    return {amount:0,used:0};
+  }
+
+  const amount=Math.min(
+    customer.points*ALL_PER_POINT,
+    total
+  );
+
+  return {
+    amount:Math.round(amount*100)/100,
+    used:Math.ceil(amount/ALL_PER_POINT)
+  };
 }
 
 function refreshLoyaltyUI(){
-  const key = getLoyaltyKey();
-  if(!key){
-    loyaltyInfoEl.innerHTML = 'Vendos emrin ose telefonin e klientit për të parë pikët.';
-    loyaltyDiscountEl.textContent = '';
-    useLoyaltyPointsEl.checked = false;
-    useLoyaltyPointsEl.disabled = true;
+  const customer=getCustomer();
+
+  if(!customer){
+    $('loyaltyInfo').textContent=
+      'Vendos emrin ose telefonin e klientit për të parë pikët.';
+    $('useLoyaltyPoints').checked=false;
+    $('useLoyaltyPoints').disabled=true;
+    $('loyaltyDiscount').textContent='';
+    renderCustomerResults();
     recalc();
     return;
   }
 
-  const customer = getLoyaltyCustomer();
-  loyaltyInfoEl.innerHTML = `Klienti ka: <span class="loyalty-positive">${customer.points} pikë</span><br>Vlera e pikëve: <b>${formatMoney(customer.points * ALL_PER_POINT)} ALL</b>`;
+  $('loyaltyInfo').innerHTML=`
+    Klienti: <b>${esc(customer.name||'--')}</b><br>
+    Pikë aktuale: <span class="green">${customer.points}</span><br>
+    Pikë totale të mbledhura: <b>${customer.totalEarned}</b><br>
+    Pikë të përdorura: <b>${customer.totalUsed}</b><br>
+    Shpenzuar: <b>${money(customer.totalSpentALL)} ALL</b>
+  `;
 
-  if(customer.points <= 0){
-    useLoyaltyPointsEl.checked = false;
-    useLoyaltyPointsEl.disabled = true;
-    loyaltyDiscountEl.textContent = 'Klienti nuk ka pikë për përdorim.';
-  } else {
-    useLoyaltyPointsEl.disabled = false;
-    loyaltyDiscountEl.textContent = `Mund të përdorë deri në ${formatMoney(customer.points * ALL_PER_POINT)} ALL zbritje.`;
+  $('useLoyaltyPoints').disabled=customer.points<=0;
+
+  if(customer.points<=0){
+    $('useLoyaltyPoints').checked=false;
+    $('loyaltyDiscount').textContent='Klienti nuk ka pikë për përdorim.';
+  }else{
+    $('loyaltyDiscount').textContent=
+      `Mund të përdorë deri në ${money(customer.points*ALL_PER_POINT)} ALL zbritje.`;
   }
 
+  renderCustomerResults();
   recalc();
 }
 
 function updateLoyaltyAfterPayment(record){
-  const key = getLoyaltyKey();
-  if(!key) return;
-  const customer = getLoyaltyCustomer();
-  if(!customer) return;
+  const customer=getCustomer();
 
-  const pointsUsed = record.loyaltyPointsUsed || 0;
-  const earnedPoints = calculateEarnedPoints(record.amountPaid);
+  if(!customer)return;
 
-  customer.points = Math.max(0, customer.points - pointsUsed + earnedPoints);
-  customer.totalSpentALL += record.amountPaid;
-  customer.transactions += 1;
-  customer.updatedAt = new Date().toISOString();
+  const used=num(record.loyaltyPointsUsed);
+  const earned=calculateEarnedPoints(record.amountPaid);
 
-  saveLoyaltyCustomers();
+  customer.points=Math.max(
+    0,
+    customer.points-used+earned
+  );
 
-  record.loyaltyPointsEarned = earnedPoints;
-  record.loyaltyBalanceAfter = customer.points;
+  customer.totalEarned=num(customer.totalEarned)+earned;
+  customer.totalUsed=num(customer.totalUsed)+used;
+  customer.totalSpentALL+=num(record.amountPaid);
+  customer.transactions=num(customer.transactions)+1;
+  customer.updatedAt=new Date().toISOString();
+
+  record.loyaltyPointsEarned=earned;
+  record.loyaltyBalanceAfter=customer.points;
+  record.customerTotalEarned=customer.totalEarned;
+  record.customerTotalUsed=customer.totalUsed;
 }
 
-/* ========= CUSTOMER TABLE ========= */
-function getAllLoyaltyCustomers(){
-  return Object.values(loyaltyCustomers || {}).sort((a,b) => (Number(b.points)||0) - (Number(a.points)||0));
+function getCustomers(){
+  return Object.values(loyaltyCustomers).sort(
+    (a,b)=>num(b.points)-num(a.points)
+  );
+}
+
+function renderCustomerResults(){
+  const query=normalized(
+    `${$('client').value} ${$('clientPhone').value}`
+  );
+
+  const box=$('customerResults');
+
+  if(!query){
+    box.style.display='none';
+    box.innerHTML='';
+    return;
+  }
+
+  const matches=getCustomers()
+    .filter(customer=>
+      normalized(
+        `${customer.name} ${customer.phone}`
+      ).includes(query)
+    )
+    .slice(0,8);
+
+  if(!matches.length){
+    box.style.display='none';
+    box.innerHTML='';
+    return;
+  }
+
+  box.innerHTML=matches.map(customer=>`
+    <div class="result-row">
+      <div>
+        <b>${esc(customer.name||'--')}</b><br>
+        <span class="small">
+          ${esc(customer.phone||'--')}
+          · ${customer.points} pikë
+          · ${customer.totalEarned} totale
+        </span>
+      </div>
+
+      <button onclick="selectCustomer('${encodeURIComponent(customer.key)}')">
+        Zgjidh
+      </button>
+    </div>
+  `).join('');
+
+  box.style.display='block';
+}
+
+function selectCustomer(encodedKey){
+  const customer=loyaltyCustomers[
+    decodeURIComponent(encodedKey)
+  ];
+
+  if(!customer)return;
+
+  $('client').value=customer.name||'';
+  $('clientPhone').value=customer.phone||'';
+  $('customerResults').style.display='none';
+  refreshLoyaltyUI();
 }
 
 function renderLoyaltyTable(){
-  const search = normalizeLoyaltyValue(clientSearchEl.value);
-  const rows = getAllLoyaltyCustomers().filter(c => {
-    if(!search) return true;
-    const hay = normalizeLoyaltyValue(`${c.name || ''} ${c.phone || ''}`);
-    return hay.includes(search);
-  });
+  const query=normalized(
+    $('clientSearch').value
+  );
 
-  loyalTableEl.innerHTML = `
+  const customers=getCustomers().filter(customer=>
+    !query||
+    normalized(
+      `${customer.name} ${customer.phone}`
+    ).includes(query)
+  );
+
+  $('loyaltyTable').innerHTML=`
     <tr>
-      <th>Emri</th>
-      <th>Telefoni</th>
-      <th>Pikë</th>
-      <th>Vlera ALL</th>
-      <th>Shpenzuar</th>
-      <th>Transaksione</th>
-      <th>Veprime</th>
+      <th>Emri</th><th>Telefon</th><th>Pikë aktuale</th>
+      <th>Pikë totale</th><th>Pikë përdorur</th>
+      <th>Shpenzuar</th><th>Transaksione</th><th>Veprim</th>
     </tr>
   `;
 
-  rows.forEach(c => {
-    const tr = document.createElement('tr');
-    const cells = [
-      ['td', c.name || '--'],
-      ['td', c.phone || '--'],
-      ['td', String(Number(c.points || 0))],
-      ['td', `${formatMoney(Number(c.points || 0) * ALL_PER_POINT)} ALL`],
-      ['td', `${formatMoney(Number(c.totalSpentALL || 0))} ALL`],
-      ['td', String(Number(c.transactions || 0))]
-    ];
-
-    cells.forEach(([tag, value]) => {
-      const td = document.createElement(tag);
-      td.textContent = value;
-      tr.appendChild(td);
-    });
-
-    const act = document.createElement('td');
-    const btn = document.createElement('button');
-    btn.textContent = 'Zgjidh';
-    btn.addEventListener('click', () => applyCustomerToSale(c.name || '', c.phone || ''));
-    act.appendChild(btn);
-    tr.appendChild(act);
-
-    loyalTableEl.appendChild(tr);
+  customers.forEach(customer=>{
+    $('loyaltyTable').insertAdjacentHTML('beforeend',`
+      <tr>
+        <td>${esc(customer.name||'--')}</td>
+        <td>${esc(customer.phone||'--')}</td>
+        <td>${num(customer.points)}</td>
+        <td>${num(customer.totalEarned)}</td>
+        <td>${num(customer.totalUsed)}</td>
+        <td>${money(customer.totalSpentALL)} ALL</td>
+        <td>${num(customer.transactions)}</td>
+        <td>
+          <button onclick="selectCustomer('${encodeURIComponent(customer.key)}');openSec('sale')">
+            Zgjidh
+          </button>
+        </td>
+      </tr>
+    `);
   });
 
-  if(!rows.length){
-    loyalTableEl.innerHTML += `<tr><td colspan="7" class="muted">Nuk u gjet asnjë klient.</td></tr>`;
+  if(!customers.length){
+    $('loyaltyTable').insertAdjacentHTML('beforeend',`
+      <tr>
+        <td colspan="8" class="muted">Nuk u gjet asnjë klient.</td>
+      </tr>
+    `);
   }
-}
-
-function applyCustomerToSale(name, phone){
-  clientEl.value = name || '';
-  clientPhoneEl.value = phone || '';
-  refreshLoyaltyUI();
-  openSec('sale');
 }
 
 function resetClientFilter(){
-  clientSearchEl.value = '';
+  $('clientSearch').value='';
   renderLoyaltyTable();
 }
 
-function exportLoyaltyData(){
-  const rows = getAllLoyaltyCustomers();
-  if(!rows.length){
-    alert('Nuk ka klientë për eksport.');
+/* ================= CART AND WEIGHT ================= */
+
+function findProduct(value){
+  const query=normalized(value);
+
+  return products.find(product=>
+    normalized(product.b)===query||
+    normalized(product.n).includes(query)
+  );
+}
+
+function getQuantityForProduct(product){
+  if(product.unit==='kg'){
+    const weight=num(
+      $('saleWeight').value
+    );
+
+    if(weight<=0){
+      alert('Vendos peshën në kg.');
+      $('saleWeight').focus();
+      return 0;
+    }
+
+    return weight;
+  }
+
+  return 1;
+}
+
+function addToCart(product){
+  if(!product)return;
+
+  const quantity=getQuantityForProduct(product);
+
+  if(quantity<=0)return;
+
+  if(quantity>product.s){
+    alert('Sasia/pesha tejkalon stokun.');
     return;
   }
 
-  const csv = [
-    ['name','phone','points','totalSpentALL','transactions'],
-    ...rows.map(c => [c.name || '', c.phone || '', Number(c.points || 0), Number(c.totalSpentALL || 0), Number(c.transactions || 0)])
-  ].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const item=cart.find(
+    cartItem=>cartItem.b===product.b
+  );
 
-  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'loyalty_customers.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function backupData(){
-  const backup = {
-    products,
-    salesHistory,
-    daily,
-    eurInRegister,
-    exchangeRate,
-    forceDailyRate,
-    loyaltyCustomers,
-    reorderConfig
-  };
-
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type:'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'pos_market_backup.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function restoreData(){
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'application/json';
-  input.onchange = function(e){
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      try{
-        const data = JSON.parse(ev.target.result);
-        if(data.products) products = data.products.map(sanitizeProduct).filter(Boolean);
-        if(data.salesHistory) salesHistory = data.salesHistory;
-        if(data.daily !== undefined) daily = safeNumber(data.daily, 0);
-        if(data.eurInRegister !== undefined) eurInRegister = safeNumber(data.eurInRegister, 0);
-        if(data.exchangeRate !== undefined) exchangeRate = safeNumber(data.exchangeRate, 100);
-        if(data.forceDailyRate !== undefined) forceDailyRate = !!data.forceDailyRate;
-        if(data.loyaltyCustomers) loyaltyCustomers = data.loyaltyCustomers;
-        if(data.reorderConfig) reorderConfig = { ...reorderConfig, ...data.reorderConfig };
-
-        localStorage.setItem('p', JSON.stringify(products));
-        localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-        localStorage.setItem('daily', String(daily));
-        localStorage.setItem('eurInRegister', String(eurInRegister));
-        localStorage.setItem('exchangeRate', String(exchangeRate));
-        localStorage.setItem('forceDailyRate', forceDailyRate ? '1' : '0');
-        localStorage.setItem('loyaltyCustomers', JSON.stringify(loyaltyCustomers));
-        localStorage.setItem('reorderCfg', JSON.stringify(reorderConfig));
-
-        renderProducts();
-        renderHistory();
-        renderStats();
-        renderLoyaltyTable();
-        updateDaily();
-        refreshLoyaltyUI();
-        alert('Backup u restaurua me sukses.');
-      } catch(err){
-        alert('Backup i pavlefshëm ose i dëmtuar.');
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-/* ========= SALES ========= */
-function getCurrentSaleTotals(){
-  let subtotalALL = 0;
-  sales.forEach(x => subtotalALL += Number(x.q || 0) * Number(x.p || 0));
-
-  const surchargePct = Math.max(0, safeNumber(document.getElementById('surcharge').value, 0));
-  const surchargeAmount = round2(subtotalALL * (surchargePct / 100));
-  const totalBeforeDiscount = round2(subtotalALL + surchargeAmount);
-
-  const loyalty = calculateLoyaltyDiscount(totalBeforeDiscount);
-  const totalAll = round2(Math.max(0, totalBeforeDiscount - loyalty.discountALL));
-
-  return {
-    subtotalALL: round2(subtotalALL),
-    surchargePct,
-    surchargeAmount,
-    totalBeforeDiscount,
-    loyalty,
-    totalAll
-  };
-}
-
-function addToSale(p){
-  if(!p) return;
-  if(Number(p.s || 0) < 1) return alert('Stoku = 0');
-
-  const item = sales.find(x => x.b === p.b);
   if(item){
-    if(item.q + 1 > Number(p.s || 0)) return alert('Sasia tejkalon stoqen');
-    item.q++;
-  } else {
-    sales.push({ b:p.b, n:p.n, p: safeNumber(p.p,0), q:1 });
+    if(item.q+quantity>product.s){
+      alert('Sasia/pesha tejkalon stokun.');
+      return;
+    }
+
+    item.q+=quantity;
+  }else{
+    cart.push({
+      b:product.b,
+      n:product.n,
+      p:product.p,
+      q:quantity,
+      unit:product.unit
+    });
   }
-  drawSale();
+
+  if(product.unit==='kg'){
+    $('saleWeight').value='';
+  }
+
+  renderCart();
 }
 
 function manualAdd(){
-  const v = (saleScanEl.value || '').trim().toLowerCase();
-  if(!v) return;
+  const value=$('saleScan').value;
 
-  const product = products.find(x => {
-    const barcode = String(x.b || '').toLowerCase();
-    const name = String(x.n || '').toLowerCase();
-    return barcode === v || name.includes(v);
-  });
+  if(!clean(value))return;
 
-  if(!product) return alert('Nuk u gjet produkti');
+  const product=findProduct(value);
 
-  addToSale(product);
-  saleScanEl.value = '';
-  saleScanEl.focus();
-}
-saleScanEl.addEventListener('keydown', e => { if(e.key === 'Enter') manualAdd(); });
-
-function drawSale(){
-  saleTableEl.innerHTML = '<tr><th>Produkt</th><th>Sasi</th><th>Çmim (ALL)</th><th>Total (ALL)</th><th></th></tr>';
-  sales.forEach((x,i)=>{
-    saleTableEl.innerHTML += `
-      <tr>
-        <td>${escapeHtml(x.n)}</td>
-        <td>
-          <button class="qtyBtn" onclick="changeQty(${i},-1)">➖</button>
-          ${x.q}
-          <button class="qtyBtn" onclick="changeQty(${i},1)">➕</button>
-        </td>
-        <td>${formatMoney(x.p)}</td>
-        <td>${formatMoney(x.q * x.p)}</td>
-        <td><button class="danger" onclick="sales.splice(${i},1);drawSale();">🗑️</button></td>
-      </tr>
-    `;
-  });
-  recalc();
-}
-
-function changeQty(i, delta){
-  const item = sales[i];
-  if(!item) return;
-
-  const product = products.find(p => p.b === item.b);
-  item.q += delta;
-
-  if(item.q < 1){
-    sales.splice(i,1);
-  } else if(product && item.q > Number(product.s || 0)){
-    item.q = Number(product.s || 0);
-    alert('Sasia tejkalon stoqen');
-  }
-
-  drawSale();
-}
-
-function recalc(){
-  const totals = getCurrentSaleTotals();
-  const totalAll = totals.totalAll;
-
-  totEl.textContent = totalAll.toFixed(2);
-
-  if(totals.loyalty.discountALL > 0){
-    loyaltyDiscountEl.innerHTML = `<span class="loyalty-positive">Zbritje nga pikët: -${formatMoney(totals.loyalty.discountALL)} ALL</span>`;
-  } else {
-    loyaltyDiscountEl.textContent = useLoyaltyPointsEl.checked ? 'Nuk ka pikë të mjaftueshme për këtë total.' : '';
-  }
-
-  const saleCurrency = document.getElementById('saleCurrency').value;
-  if(saleCurrency === 'EUR'){
-    const totalEur = round2(totalAll / exchangeRate);
-    totInEurEl.innerHTML = `Total (EUR): <b>${totalEur.toFixed(2)}</b> EUR (kursi: 1 EUR = ${exchangeRate} ALL)`;
-  } else {
-    totInEurEl.innerHTML = '';
-  }
-
-  const paymentMethod = document.getElementById('paymentMethod').value;
-  const paidRaw = safeNumber(paidEl.value, 0);
-  let paidAllEquivalent = 0;
-
-  if(paymentMethod === 'cash_eur'){
-    paidAllEquivalent = round2(paidRaw * exchangeRate);
-  } else {
-    paidAllEquivalent = paidRaw;
-  }
-
-  const diff = round2(paidAllEquivalent - totalAll);
-  if(diff < 0){
-    changeEl.textContent = `Mungojnë ${Math.abs(diff).toFixed(2)} ALL`;
-    changeEl.style.color = 'red';
-  } else {
-    changeEl.textContent = `Kusur ${diff.toFixed(2)} ALL`;
-    changeEl.style.color = 'green';
-  }
-}
-
-paidEl.addEventListener('input', recalc);
-clientEl.addEventListener('input', refreshLoyaltyUI);
-clientPhoneEl.addEventListener('input', refreshLoyaltyUI);
-clientSearchEl.addEventListener('input', renderLoyaltyTable);
-
-/* ========= CAMERA ========= */
-camCloseBtn.addEventListener('click', stopCam);
-camEl.addEventListener('click', e => { if(e.target === camEl) stopCam(); });
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape'){
-    if(camEl.style.display === 'block') stopCam();
-    if(viewModalEl.style.display === 'block') closeView();
-    if(txnModalEl.style.display === 'block') closeTxn();
-  }
-});
-
-function openCam(target, mode){
-  scanTarget = target;
-  camMode = mode;
-  camEl.style.display = 'block';
-  stopCam();
-
-  if(!window.Quagga){
-    alert('Quagga nuk u gjet');
-    camEl.style.display = 'none';
+  if(!product){
+    alert('Produkti nuk u gjet.');
+    $('saleScan').select();
     return;
   }
 
-  Quagga.init({
-    inputStream:{ type:'LiveStream', target: scannerEl, constraints:{ facingMode:{ ideal:mode }, width:{ ideal:640 }, height:{ ideal:480 } } },
-    locator:{ patchSize:'medium', halfSample:true },
-    decoder:{ readers:['ean_reader','ean_8_reader','code_128_reader','upc_reader'] },
-    locate:true
-  }, err=>{
-    if(err){
-      alert('Kamera nuk u hap: ' + (err.message || err));
-      camEl.style.display = 'none';
-      return;
-    }
-
-    try{ Quagga.start(); quaggaRunning = true; }catch(e){
-      alert('Gabim duke nisur kamerën: ' + (e.message || e));
-      camEl.style.display = 'none';
-      return;
-    }
-
-    quaggaHandler = function(d){
-      if(quaggaDebounce) return;
-      quaggaDebounce = true; setTimeout(()=>quaggaDebounce = false, 600);
-
-      const code = d && d.codeResult && (d.codeResult.code || d.codeResult.codeResult);
-      if(!code) return;
-
-      if(scanTarget === 'stock'){
-        document.getElementById('pb').value = code;
-      } else if(scanTarget === 'sale'){
-        const p = products.find(x => String(x.b).trim() === String(code).trim());
-        if(p) addToSale(p);
-        else alert('Barkodi nuk u gjet: ' + code);
-      }
-
-      setTimeout(stopCam, 300);
-    };
-
-    try{ Quagga.onDetected(quaggaHandler); }catch(e){ try{ Quagga.on('detected', quaggaHandler); }catch(e){} }
-  });
+  addToCart(product);
+  $('saleScan').value='';
+  $('saleScan').focus();
 }
 
-function stopCam(){
-  camEl.style.display = 'none';
-  try{
-    if(quaggaHandler && window.Quagga){
-      try{ Quagga.offDetected(quaggaHandler); }catch(e){ try{ Quagga.off('detected', quaggaHandler); }catch(e){} }
-    }
-  }catch(e){}
-  try{ if(window.Quagga && quaggaRunning) Quagga.stop(); }catch(e){}
-  quaggaHandler = null;
-  quaggaRunning = false;
-}
-
-/* ========= PRINT RECEIPT ========= */
-function buildReceiptText(record){
-  const rows = record.items.map(it => `${it.n} x${it.q} = ${formatMoney(it.q * it.p)} ALL`).join('\n');
-  const loyaltyLine = record.loyaltyDiscountALL > 0 ? `Zbritje pikë: -${formatMoney(record.loyaltyDiscountALL)} ALL\n` : '';
-  return `
-POS MARKET
--------------------------
-Data: ${new Date(record.timestamp).toLocaleString('sq-AL')}
-Klient: ${record.client || '--'}
-Telefoni: ${record.clientPhone || '--'}
--------------------------
-${rows}
--------------------------
-Subtotal: ${formatMoney(record.subtotalAll)} ALL
-Shtesë: ${formatMoney(record.surchargePct)}%
-${loyaltyLine}Total: ${formatMoney(record.totalAll)} ALL
-Paguar: ${formatMoney(record.amountPaid)} ALL
-Kusur: ${formatMoney(record.changeALL)} ALL
-Status: ${record.status}
--------------------------
-`;
-}
-
-function printReceipt(record){
-  const printWindow = window.open('', '_blank', 'width=400,height=700');
-  if(!printWindow) return;
-
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Receipt</title>
-        <style>
-          body{font-family:monospace;padding:20px;font-size:12px;line-height:1.5;color:#111}
-          .box{white-space:pre-wrap}
-        </style>
-      </head>
-      <body>
-        <div class="box">${escapeHtml(buildReceiptText(record))}</div>
-        <script>window.print(); setTimeout(()=>window.close(), 500);</script>
-      </body>
-    </html>
-  `);
-}
-
-/* ========= PAYMENTS + HISTORY ========= */
-function pay(){
-  if(sales.length === 0){
-    alert('Shporta është bosh');
-    return;
-  }
-
-  const totalAll = round2(Number(totEl.textContent) || 0);
-  const cashInput = safeNumber(paidEl.value, 0);
-
-  if(cashInput <= 0){
-    alert('Shuma e paguar duhet të jetë më e madhe se 0');
-    return;
-  }
-
-  const paymentMethod = document.getElementById('paymentMethod').value;
-  let cashGivenRaw = cashInput;
-  let cashGivenALL = 0;
-  let paymentCurrency = 'ALL';
-
-  if(paymentMethod === 'cash_eur'){
-    paymentCurrency = 'EUR';
-    cashGivenALL = round2(cashGivenRaw * exchangeRate);
-  } else {
-    paymentCurrency = 'ALL';
-    cashGivenALL = round2(cashGivenRaw);
-  }
-
-  const subtotalALL = sales.reduce((sum, item) => sum + Number(item.q || 0) * Number(item.p || 0), 0);
-  const surchargePct = Math.max(0, safeNumber(document.getElementById('surcharge').value, 0));
-  const surchargeAmount = round2(subtotalALL * (surchargePct / 100));
-  const totalBeforeDiscount = round2(subtotalALL + surchargeAmount);
-
-  const loyalty = calculateLoyaltyDiscount(totalBeforeDiscount);
-  const loyaltyPointsUsed = loyalty.pointsUsed || 0;
-
-  const netCollectedALL = Math.min(cashGivenALL, totalAll);
-  const changeALL = Math.max(0, cashGivenALL - totalAll);
-  const due = Math.max(0, totalAll - cashGivenALL);
-  const status = cashGivenALL >= totalAll ? 'paid' : 'owed';
-
-  for(const item of sales){
-    const prod = products.find(p => p.b === item.b);
-    if(prod) prod.s = Math.max(0, Number(prod.s || 0) - Number(item.q || 0));
-  }
-  storeProducts();
-
-  const timestamp = new Date().toISOString();
-  const record = {
-    id: timestamp + '_' + Math.random().toString(36).slice(2,7),
-    timestamp,
-    client: (clientEl.value || '').trim() || null,
-    clientPhone: (clientPhoneEl.value || '').trim() || null,
-    items: JSON.parse(JSON.stringify(sales)),
-    subtotalAll: round2(subtotalALL),
-    surchargePct: round2(surchargePct),
-    loyaltyDiscountALL: round2(loyalty.discountALL || 0),
-    loyaltyPointsUsed,
-    totalBeforeLoyaltyDiscount: round2(totalBeforeDiscount),
-    totalAll,
-    paymentMethod,
-    paymentCurrency,
-    cashGivenRaw: round2(cashGivenRaw),
-    cashGivenALL: round2(cashGivenALL),
-    changeALL: round2(changeALL),
-    amountPaid: round2(netCollectedALL),
-    due: round2(due),
-    status,
-    loyaltyPointsEarned: 0,
-    loyaltyBalanceAfter: 0
-  };
-
-  updateLoyaltyAfterPayment(record);
-
-  salesHistory.unshift(record);
-  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-  renderStats();
-
-  daily += record.amountPaid;
-  localStorage.setItem('daily', String(daily));
-
-  if(paymentCurrency === 'EUR'){
-    const netEur = round2(Math.min(cashGivenALL, totalAll) / exchangeRate);
-    eurInRegister += netEur;
-    localStorage.setItem('eurInRegister', String(round2(eurInRegister)));
-  }
-
-  cancel();
-  updateDaily();
-  renderHistory();
-
-  printReceipt(record);
-
-  let html = '';
-  html += status === 'paid' ? `<div class="success">Transaksioni u mbyll me sukses</div>` : `<div class="warn">Shitja u regjistrua si BORXH</div>`;
-  html += `<div><b>Produkte:</b><ul class="txn-list">${record.items.map(it => `<li>${escapeHtml(it.n)} x${it.q} = ${it.q*it.p} ALL</li>`).join('')}</ul></div>`;
-  html += `<div class="txn-summary">Total (ALL): ${record.totalAll} ALL</div>`;
-  if(record.loyaltyDiscountALL > 0){
-    html += `<div class="success">Zbritje nga pikët: -${record.loyaltyDiscountALL} ALL</div>`;
-  }
-  html += `<div>Klienti dha: ${record.cashGivenRaw} ${record.paymentCurrency}</div>`;
-  html += `<div>Kusur (ALL): ${record.changeALL}</div>`;
-  html += `<div class="small">Shuma e shtuar në arkë (neto, ALL): ${record.amountPaid} ALL</div>`;
-  if(record.paymentCurrency === 'EUR'){
-    html += `<div class="small">Euro të mbledhura (neto): ${round2(record.amountPaid / exchangeRate)} EUR</div>`;
-  }
-
-  txnTitleEl.textContent = status === 'paid' ? 'Shitje e plotë' : 'Shitje me borxh';
-  showTxn(html);
-}
-
-function cancel(){
-  sales = [];
-  saleTableEl.innerHTML = '';
-  totEl.textContent = '0';
-  totInEurEl.innerHTML = '';
-  paidEl.value = '';
-  changeEl.textContent = '0';
-  changeEl.style.color = '';
-  clientEl.value = '';
-  clientPhoneEl.value = '';
-  useLoyaltyPointsEl.checked = false;
-  useLoyaltyPointsEl.disabled = false;
-  loyaltyInfoEl.textContent = 'Vendos emrin ose telefonin e klientit për të parë pikët.';
-  loyaltyDiscountEl.textContent = '';
-  document.getElementById('surcharge').value = 0;
-  recalc();
-}
-
-/* ========= HISTORY ========= */
-function renderHistory(){
-  histTableEl.innerHTML = `
+function renderCart(){
+  $('saleTable').innerHTML=`
     <tr>
-      <th>Data</th><th>Klient</th><th>Telefon</th><th>Total(ALL)</th><th>Paguar(ALL)</th>
-      <th>Paguar/Valutë</th><th>Pikë</th><th>Mbetje</th><th>Status</th><th>Veprime</th>
+      <th>Produkt</th>
+      <th>Sasi/Peshë</th>
+      <th>Çmim</th>
+      <th>Total</th>
+      <th>Fshi</th>
     </tr>
   `;
 
-  salesHistory.forEach(rec=>{
-    histTableEl.innerHTML += `
+  cart.forEach((item,index)=>{
+    const quantityText=item.unit==='kg'
+      ? `${item.q.toFixed(3)} kg`
+      : `${item.q} copë`;
+
+    const priceText=item.unit==='kg'
+      ? `${money(item.p)} ALL/kg`
+      : `${money(item.p)} ALL/copë`;
+
+    $('saleTable').insertAdjacentHTML('beforeend',`
       <tr>
-        <td>${String(rec.timestamp || '').replace('T',' ').slice(0,19)}</td>
-        <td>${escapeHtml(rec.client || '--')}</td>
-        <td>${escapeHtml(rec.clientPhone || '--')}</td>
-        <td>${formatMoney(rec.totalAll)}</td>
-        <td>${formatMoney(rec.amountPaid)}</td>
-        <td>${rec.cashGivenRaw} ${rec.paymentCurrency} (${rec.paymentMethod})</td>
-        <td>${rec.loyaltyPointsEarned || 0}</td>
-        <td>${formatMoney(rec.due)}</td>
-        <td>${escapeHtml(rec.status)}</td>
+        <td>${esc(item.n)}</td>
+
         <td>
-          <button onclick='viewSale(${JSON.stringify(rec.id)})'>Shiko</button>
-          <button class="danger" onclick='deleteSale(${JSON.stringify(rec.id)})'>🗑️</button>
+          <button onclick="changeQty(${index},-1)">➖</button>
+          ${quantityText}
+          <button onclick="changeQty(${index},1)">➕</button>
+        </td>
+
+        <td>${priceText}</td>
+        <td>${money(item.q*item.p)} ALL</td>
+
+        <td>
+          <button class="danger" onclick="removeCartItem(${index})">
+            🗑️
+          </button>
         </td>
       </tr>
-    `;
+    `);
   });
+
+  recalc();
 }
 
-function viewSale(id){
-  const r = salesHistory.find(x => x.id === id);
-  if(!r) return alert('Nuk u gjet shitja');
-
-  const body = document.getElementById('viewBody');
-  let html = `<p><b>Data:</b> ${String(r.timestamp || '').replace('T',' ').slice(0,19)}</p>`;
-  html += `<p><b>Klient:</b> ${escapeHtml(r.client || '--')}</p>`;
-  html += `<p><b>Telefon:</b> ${escapeHtml(r.clientPhone || '--')}</p>`;
-  html += `<p><b>Subtotal:</b> ${formatMoney(r.subtotalAll)} ALL</p>`;
-  html += `<p><b>Surcharge (%):</b> ${r.surchargePct}</p>`;
-  html += `<p><b>Zbritje nga pikët:</b> ${formatMoney(r.loyaltyDiscountALL || 0)} ALL</p>`;
-  html += `<p><b>Pikë të përdorura:</b> ${r.loyaltyPointsUsed || 0}</p>`;
-  html += `<p><b>Pikë të fituara:</b> ${r.loyaltyPointsEarned || 0}</p>`;
-  html += `<p><b>Bilanci i pikëve:</b> ${r.loyaltyBalanceAfter || 0}</p>`;
-  html += `<p><b>Total (ALL):</b> ${formatMoney(r.totalAll)} ALL</p>`;
-  html += `<p><b>Paguar (neto, ALL):</b> ${formatMoney(r.amountPaid)} ALL</p>`;
-  html += `<p><b>Klienti dha:</b> ${r.cashGivenRaw} ${r.paymentCurrency}</p>`;
-  html += `<p><b>Kusur:</b> ${formatMoney(r.changeALL)} ALL</p>`;
-  html += `<p><b>Mbetje:</b> ${formatMoney(r.due)} ALL</p>`;
-  html += `<p><b>Status:</b> ${escapeHtml(r.status)}</p>`;
-  html += `<hr><p><b>Produkte:</b></p><ul>`;
-  r.items.forEach(it => html += `<li>${escapeHtml(it.n)} x${it.q} = ${it.q * it.p} ALL</li>`);
-  html += '</ul>';
-
-  body.innerHTML = html;
-  viewModalEl.dataset.currentId = id;
-  settleAmountEl.value = r.due || '';
-  viewModalEl.style.display = 'block';
-}
-function closeView(){ viewModalEl.style.display = 'none'; delete viewModalEl.dataset.currentId; }
-
-function deleteSale(id){
-  if(!confirm('Fshi këtë regjistrim?')) return;
-  salesHistory = salesHistory.filter(x => x.id !== id);
-  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-  renderHistory();
-  renderStats();
+function removeCartItem(index){
+  cart.splice(index,1);
+  renderCart();
 }
 
-/* ========= DEBT ========= */
-function settleDebt(){
-  const id = viewModalEl.dataset.currentId;
-  if(!id) return alert('Nuk ka shitje të zgjedhur');
+function changeQty(index,delta){
+  const item=cart[index];
 
-  const r = salesHistory.find(x => x.id === id);
-  if(!r) return alert('Nuk u gjet shitja');
+  if(!item)return;
 
-  let amt = safeNumber(settleAmountEl.value, 0);
-  if(amt <= 0) return alert('Shuma duhet > 0');
-  if(r.due <= 0) return alert('Nuk ka borxh për këtë shitje');
+  const product=products.find(
+    productItem=>productItem.b===item.b
+  );
 
-  const payNow = Math.min(amt, r.due);
-  r.amountPaid += payNow;
-  r.due -= payNow;
+  const amount=item.unit==='kg'
+    ? .001
+    : 1;
 
-  if(r.due <= 0){
-    r.status = 'paid';
-    r.due = 0;
-  } else {
-    r.status = 'owed';
+  item.q+=delta*amount;
+
+  if(item.q<=0){
+    cart.splice(index,1);
+  }else if(product&&item.q>product.s){
+    item.q=product.s;
+    alert('Sasia/pesha tejkalon stokun.');
   }
 
-  daily += payNow;
-  localStorage.setItem('daily', String(daily));
-
-  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-  updateDaily();
-  renderHistory();
-  viewSale(id);
-  showTxn(`<div class="success">Transaksioni u mbyll me sukses</div><div>U faturua shuma: ${payNow} ALL</div>`);
+  renderCart();
 }
 
-/* ========= EXPORT / CLEAR ========= */
-function exportCSV(){
-  if(!salesHistory.length) return alert('Nuk ka të dhëna për eksport');
+function calculateTotals(){
+  const subtotal=cart.reduce(
+    (sum,item)=>sum+item.q*item.p,
+    0
+  );
 
-  const rows = [];
-  const header = ['id','timestamp','client','clientPhone','subtotalAll','surchargePct','loyaltyDiscountALL','loyaltyPointsUsed','totalAll','amountPaid','cashGivenRaw','paymentCurrency','paymentMethod','changeALL','due','status','items'];
-  rows.push(header.join(','));
+  const percentage=Math.max(
+    0,
+    num($('surcharge').value)
+  );
 
-  salesHistory.slice().reverse().forEach(r=>{
-    const itemsText = r.items.map(i => `${i.n} x${i.q}=${i.q*i.p}`).join(' | ');
-    const row = [
-      `"${r.id}"`,
-      `"${r.timestamp}"`,
-      `"${(r.client || '')}"`,
-      `"${(r.clientPhone || '')}"`,
-      r.subtotalAll,
-      r.surchargePct,
-      r.loyaltyDiscountALL || 0,
-      r.loyaltyPointsUsed || 0,
-      r.totalAll,
-      r.amountPaid,
-      r.cashGivenRaw,
-      `"${r.paymentCurrency}"`,
-      `"${r.paymentMethod}"`,
-      r.changeALL,
-      r.due,
-      `"${r.status}"`,
-      `"${itemsText}"`
-    ];
-    rows.push(row.join(','));
-  });
+  const surcharge=subtotal*percentage/100;
 
-  const csv = rows.join('\n');
-  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'sales_history.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  const before=Math.round(
+    (subtotal+surcharge)*100
+  )/100;
+
+  const loyalty=loyaltyDiscount(before);
+
+  const total=Math.max(
+    0,
+    Math.round(
+      (before-loyalty.amount)*100
+    )/100
+  );
+
+  return {
+    subtotal,
+    percentage,
+    surcharge,
+    before,
+    loyalty,
+    total
+  };
 }
 
-function clearOld(){
-  if(!confirm('Je i sigurt? Kjo do fshij historikun lokal.')) return;
-  salesHistory = [];
-  localStorage.removeItem('salesHistory');
-  renderHistory();
-  renderStats();
+function paymentChanged(){
+  if($('paymentMethod').value==='cash_eur'){
+    $('saleCurrency').value='EUR';
+  }else{
+    $('saleCurrency').value='ALL';
+  }
+
+  recalc();
 }
 
-/* ========= DAILY & BALANCE ========= */
-function updateDaily(){
-  dailyEl.textContent = Number(daily || 0).toFixed(2);
-  dailyEurEl.textContent = Number(eurInRegister || 0).toFixed(2);
+function recalc(){
+  const totals=calculateTotals();
+
+  $('tot').textContent=money(totals.total);
+
+  $('totInEur').innerHTML=
+    $('saleCurrency').value==='EUR'
+      ? `Total EUR:
+         <b>${money(totals.total/exchangeRate)} EUR</b>`
+      : '';
+
+  $('loyaltyDiscount').innerHTML=
+    totals.loyalty.amount
+      ? `<span class="green">
+          Zbritje:
+          -${money(totals.loyalty.amount)} ALL
+        </span>`
+      : '';
+
+  const paid=num($('paid').value);
+
+  const paidALL=
+    $('paymentMethod').value==='cash_eur'
+      ? paid*exchangeRate
+      : paid;
+
+  const difference=paidALL-totals.total;
+
+  $('change').textContent=
+    difference<0
+      ? `Mungojnë ${money(Math.abs(difference))} ALL`
+      : `Kusur ${money(difference)} ALL`;
+
+  $('change').style.color=
+    difference<0?'red':'green';
+}
+
+/* ================= CASH REGISTER ================= */
+
+function openKasa(){
+  const amount=num(
+    $('openingFloatInput').value,
+    0
+  );
+
+  if(amount<0){
+    alert('Thyerja nuk mund të jetë negative.');
+    return;
+  }
+
+  if(
+    kasaOpenedAt &&
+    !confirm('Kasa është e hapur. Dëshiron të ndryshosh thyerjen?')
+  ){
+    return;
+  }
+
+  openingFloatALL=amount;
+  kasaOpenedAt=new Date().toISOString();
+
+  save();
+  updateBalance();
+
+  showTxn(
+    'Hapja e Kasës',
+    `<div class="green">
+      Kasa u hap me thyerje ${money(amount)} ALL.
+    </div>`
+  );
+}
+
+function updateBalance(){
+  $('daily').textContent=money(cashALL);
+  $('dailyCard').textContent=money(cardALL);
+  $('dailyEUR').textContent=money(cashEUR);
+
+  $('cashBalanceALL').textContent=money(cashALL);
+  $('cardBalanceALL').textContent=money(cardALL);
+  $('cashBalanceEUR').textContent=money(cashEUR);
+
+  $('activeFloat').textContent=money(openingFloatALL);
+  $('activeFloatCard').textContent=money(openingFloatALL);
+  $('exchangeRateInput').value=exchangeRate;
+
+  $('kasaStatus').textContent=kasaOpenedAt
+    ? `Hapur më ${dateTime(kasaOpenedAt)}`
+    : 'Kasa e mbyllur';
+
+  $('kasaStatus').className=kasaOpenedAt
+    ? 'green'
+    : 'red';
 }
 
 function saveExchangeRate(){
-  const v = Math.max(0.0001, safeNumber(exchangeRateInput.value, 0));
-  if(v <= 0) return alert('Kurs i pavlefshëm');
-  exchangeRate = v;
-  localStorage.setItem('exchangeRate', String(exchangeRate));
-  forceDailyRate = !!forceDailyRateEl.checked;
-  localStorage.setItem('forceDailyRate', forceDailyRate ? '1' : '0');
-  showTxn(`<div class="success">Kursi u ruajt: 1 EUR = ${exchangeRate} ALL</div>`);
-  txnTitleEl.textContent = 'Kursi i këmbimit';
+  const value=num(
+    $('exchangeRateInput').value,
+    0
+  );
+
+  if(value<=0){
+    alert('Kurs i pavlefshëm.');
+    return;
+  }
+
+  exchangeRate=value;
+  save();
   recalc();
+
+  showTxn(
+    'Kursi',
+    `<div class="green">
+      1 EUR = ${money(exchangeRate)} ALL
+    </div>`
+  );
+}
+
+/* ================= DAILY BALANCE / EXCEL ================= */
+
+function exportDailyClosuresExcel(){
+  const closures=parse(
+    localStorage.getItem('dayClosures'),
+    []
+  );
+
+  if(!closures.length){
+    alert('Nuk ka bilance ditore të ruajtura.');
+    return;
+  }
+
+  const rows=[[
+    'Data',
+    'Thyerja ALL',
+    'Cash ALL sistem',
+    'Kartë ALL',
+    'Cash EUR sistem',
+    'Arka reale ALL',
+    'Arka reale EUR',
+    'Cash ALL i pritur',
+    'Diferenca ALL',
+    'Diferenca EUR',
+    'Kursi'
+  ]];
+
+  closures.forEach(item=>{
+    rows.push([
+      item.date||item.timestamp||'',
+      num(item.openingFloatALL),
+      num(item.cashALLSystem??item.cashSalesALL),
+      num(item.cardALLSystem??item.cardALL),
+      num(item.cashEURSystem??item.cashEUR),
+      num(item.realCashALL??item.realALL),
+      num(item.realCashEUR??item.realEUR),
+      num(item.expectedCashALL),
+      signedMoney(item.diffCashALL??item.differenceALL),
+      signedMoney(item.diffCashEUR??item.differenceEUR),
+      num(item.exchangeRate)
+    ]);
+  });
+
+  const csv='\uFEFF'+rows
+    .map(row=>row.map(csvCell).join(','))
+    .join('\n');
+
+  downloadFile(
+    'day_closures.csv',
+    csv,
+    'text/csv;charset=utf-8'
+  );
 }
 
 function closeDay(){
-  const sysAll = daily;
-  const sysEur = eurInRegister;
-  const realAll = safeNumber(cashRealALLEl.value, 0);
-  const realEur = safeNumber(cashRealEUREl.value, 0);
+  if(!kasaOpenedAt){
+    alert('Kasa nuk është hapur.');
+    return;
+  }
 
-  const diffAll = realAll - sysAll;
-  const diffEur = realEur - sysEur;
+  const realCashALL=num(
+    $('cashRealALL').value,
+    0
+  );
 
-  const closures = safeParse(localStorage.getItem('dayClosures'), []);
-  const closure = {
-    timestamp: new Date().toISOString(),
-    systemAll: sysAll,
-    systemEur: sysEur,
-    cashAll: realAll,
-    cashEur: realEur,
-    diffAll,
-    diffEur
-  };
+  const realCashEUR=num(
+    $('cashRealEUR').value,
+    0
+  );
 
-  closures.push(closure);
-  localStorage.setItem('dayClosures', JSON.stringify(closures));
+  const expectedCashALL=
+    openingFloatALL+cashALL;
 
-  daily = 0;
-  localStorage.setItem('daily', '0');
+  const diffCashALL=
+    realCashALL-expectedCashALL;
 
-  cashRealALLEl.value = '';
-  cashRealEUREl.value = '';
-  updateDaily();
+  const diffCashEUR=
+    realCashEUR-cashEUR;
 
-  const html = `
-    <div class="success">Mbyllje dite u krye</div>
-    <div><b>Shuma në sistem (ALL):</b> ${closure.systemAll} ALL</div>
-    <div><b>Shuma në sistem (EUR):</b> ${closure.systemEur} EUR</div>
-    <div><b>Arka reale (ALL):</b> ${closure.cashAll} ALL</div>
-    <div><b>Arka reale (EUR):</b> ${closure.cashEur} EUR</div>
-    <div><b>Diferenca (ALL):</b> ${closure.diffAll} ALL</div>
-    <div><b>Diferenca (EUR):</b> ${closure.diffEur} EUR</div>
-    <div class="small">Kursi i përdorur: 1 EUR = ${exchangeRate} ALL</div>
+  const closures=parse(
+    localStorage.getItem('dayClosures'),
+    []
+  );
+
+  closures.push({
+    date:new Date().toISOString(),
+    openingFloatALL,
+    cashALLSystem:cashALL,
+    cardALLSystem:cardALL,
+    cashEURSystem:cashEUR,
+    realCashALL,
+    realCashEUR,
+    expectedCashALL,
+    diffCashALL,
+    diffCashEUR,
+    exchangeRate
+  });
+
+  localStorage.setItem(
+    'dayClosures',
+    JSON.stringify(closures)
+  );
+
+  const report=`
+    <div class="green">Mbyllja e ditës u krye.</div>
+
+    <p>Thyerja:
+      <b>${money(openingFloatALL)} ALL</b>
+    </p>
+
+    <p>Cash ALL sistem:
+      <b>${money(cashALL)} ALL</b>
+    </p>
+
+    <p>Kartë:
+      <b>${money(cardALL)} ALL</b>
+    </p>
+
+    <p>Cash EUR:
+      <b>${money(cashEUR)} EUR</b>
+    </p>
+
+    <hr>
+
+    <p>Arka reale ALL:
+      <b>${money(realCashALL)} ALL</b>
+    </p>
+
+    <p>Arka reale EUR:
+      <b>${money(realCashEUR)} EUR</b>
+    </p>
+
+    <p>Cash ALL i pritur:
+      <b>${money(expectedCashALL)} ALL</b>
+    </p>
+
+    <p>Diferenca ALL:
+      <b class="${diffCashALL>=0?'green':'red'}">
+        ${signedMoney(diffCashALL)} ALL
+      </b>
+    </p>
+
+    <p>Diferenca EUR:
+      <b class="${diffCashEUR>=0?'green':'red'}">
+        ${signedMoney(diffCashEUR)} EUR
+      </b>
+    </p>
+
+    <p class="small">
+      Pozitive = tepricë. Negative = mungesë.
+    </p>
   `;
 
-  txnTitleEl.textContent = 'Mbyllje dite + Raport';
-  showTxn(html);
+  openingFloatALL=0;
+  kasaOpenedAt='';
+  cashALL=0;
+  cardALL=0;
+  cashEUR=0;
+
+  $('cashRealALL').value='';
+  $('cashRealEUR').value='';
+  $('openingFloatInput').value='';
+
+  save();
+  updateBalance();
+
+  showTxn('Mbyllje Dite',report);
 }
 
-/* ========= REORDER REPORT ========= */
-function aggregateSales(records){
-  const agg = {};
-  records.forEach(r=>{
-    (r.items || []).forEach(it=>{
-      const key = it.b || it.n;
-      if(!agg[key]) agg[key] = { b: it.b, n: it.n, qty:0, revenue:0, daily:{} };
-      agg[key].qty += it.q;
-      agg[key].revenue += (it.q * it.p);
-      const day = getLocalDateStr(r.timestamp);
-      agg[key].daily[day] = (agg[key].daily[day] || 0) + it.q;
-    });
-  });
-  return agg;
-}
+/* ================= PAYMENTS ================= */
 
-function computeMovingAverageForProduct(dailyCountsObj, windowDays){
-  const arr = [];
-  for(let i=0;i<windowDays;i++){
-    const dt = new Date(Date.now() - i*24*60*60*1000);
-    const key = getLocalDateStr(dt.toISOString());
-    arr.push(dailyCountsObj[key] || 0);
+function updateBalancesAfterPayment(record){
+  /*
+    Cash ALL:
+    - Cash ALL shton shumën e paguar.
+    - Cash EUR heq kusurin e dhënë në ALL.
+    - Kartë nuk ndryshon Cash ALL.
+
+    Cash EUR:
+    - Shton eurot reale që klienti dha.
+
+    Kartë:
+    - Shton vetëm bilancin e kartës.
+  */
+  if(record.paymentMethod==='cash_all'){
+    cashALL+=record.amountPaid;
   }
-  const sum = arr.reduce((a,b)=>a+b,0);
-  const avg = sum / windowDays;
-  const variance = arr.reduce((acc,v)=>acc + Math.pow(v - avg, 2), 0) / windowDays;
-  const sd = Math.sqrt(variance);
-  return { avg, sd };
+
+  if(record.paymentMethod==='card'){
+    cardALL+=record.amountPaid;
+  }
+
+  if(record.paymentMethod==='cash_eur'){
+    cashEUR+=record.cashGivenRaw;
+    cashALL-=record.changeALL;
+  }
+
+  cashALL=Math.round(cashALL*100)/100;
+  cardALL=Math.round(cardALL*100)/100;
+  cashEUR=Math.round(cashEUR*100)/100;
 }
 
-function getSalesSinceDays(days){
-  const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
-  return salesHistory.filter(r => new Date(r.timestamp).getTime() >= cutoff);
-}
+function pay(){
+  if(!kasaOpenedAt){
+    alert(
+      'Kasa nuk është hapur. '+
+      'Vendos thyerjen te Bilanci dhe hap kasën.'
+    );
+    openSec('bil');
+    return;
+  }
 
-function buildReorderReportRaw(manual = false){
-  const now = new Date();
-  const isWeekly = [1,4].includes(now.getDay());
-  if(!manual && !isWeekly) return null;
+  if(!cart.length){
+    alert('Shporta është bosh.');
+    return;
+  }
 
-  const last7 = getSalesSinceDays(7);
-  const agg7 = aggregateSales(last7);
-  const last14 = getSalesSinceDays(14);
-  const agg14 = aggregateSales(last14);
+  const totals=calculateTotals();
+  const method=$('paymentMethod').value;
+  const rawPaid=num($('paid').value);
 
-  const suggestions = [];
-  const slowItems = [];
+  const paidALL=
+    method==='cash_eur'
+      ? rawPaid*exchangeRate
+      : rawPaid;
 
-  products.forEach(p=>{
-    const key = p.b || p.n;
-    const entry7 = agg7[key] || { qty:0, daily:{} };
-    const stats = computeMovingAverageForProduct(entry7.daily, reorderConfig.reviewPeriodDays || 7);
-    const avgDaily = stats.avg;
-    const sdDaily = stats.sd;
-    const targetStock = Math.ceil(avgDaily * (reorderConfig.leadDays || 3) * (reorderConfig.safetyStockFactor || 1.5));
+  const amountPaid=Math.min(
+    paidALL,
+    totals.total
+  );
 
-    if(avgDaily > 0.001){
-      if(p.s < targetStock){
-        const desiredCoverage = Math.ceil(avgDaily * ((reorderConfig.leadDays || 3) + (reorderConfig.reviewPeriodDays || 7)));
-        const safety = Math.ceil(sdDaily * Math.sqrt(reorderConfig.leadDays || 1));
-        let suggestedQty = Math.max(reorderConfig.minOrderQty || 1, desiredCoverage + safety - p.s);
-        suggestedQty = Math.max(1, suggestedQty);
-        suggestions.push({ b:p.b, n:p.n, stock:p.s, avgDaily:avgDaily.toFixed(2), sdDaily:sdDaily.toFixed(2), targetStock, suggestedQty });
-      }
-    } else {
-      const entry14 = agg14[key] || { qty:0 };
-      if(!entry14 || entry14.qty === 0) slowItems.push({ b:p.b, n:p.n, stock:p.s });
+  const change=Math.max(
+    0,
+    paidALL-totals.total
+  );
+
+  const due=Math.max(
+    0,
+    totals.total-paidALL
+  );
+
+  const customer=getCustomer();
+
+  const record={
+    id:`${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+    timestamp:new Date().toISOString(),
+    client:customer?.name||clean($('client').value)||null,
+    clientPhone:customer?.phone||clean($('clientPhone').value)||null,
+    items:JSON.parse(JSON.stringify(cart)),
+    subtotalAll:totals.subtotal,
+    surchargePct:totals.percentage,
+    surchargeAll:totals.surcharge,
+    loyaltyDiscountALL:totals.loyalty.amount,
+    loyaltyPointsUsed:totals.loyalty.used,
+    totalAll:totals.total,
+    paymentMethod:method,
+    paymentCurrency:method==='cash_eur'?'EUR':'ALL',
+    cashGivenRaw:rawPaid,
+    cashGivenALL:paidALL,
+    amountPaid,
+    changeALL:change,
+    due,
+    status:due<=0?'paid':'owed',
+    exchangeRateAtSale:exchangeRate,
+    loyaltyPointsEarned:0,
+    loyaltyBalanceAfter:0,
+    customerTotalEarned:0,
+    customerTotalUsed:0
+  };
+
+  if(customer){
+    const earned=calculateEarnedPoints(
+      record.amountPaid
+    );
+
+    customer.points=Math.max(
+      0,
+      customer.points-
+      record.loyaltyPointsUsed+
+      earned
+    );
+
+    customer.totalEarned=
+      num(customer.totalEarned)+earned;
+
+    customer.totalUsed=
+      num(customer.totalUsed)+
+      record.loyaltyPointsUsed;
+
+    customer.totalSpentALL+=record.amountPaid;
+    customer.transactions=num(customer.transactions)+1;
+    customer.updatedAt=new Date().toISOString();
+
+    record.loyaltyPointsEarned=earned;
+    record.loyaltyBalanceAfter=customer.points;
+    record.customerTotalEarned=customer.totalEarned;
+    record.customerTotalUsed=customer.totalUsed;
+  }
+
+  cart.forEach(item=>{
+    const product=products.find(
+      productItem=>productItem.b===item.b
+    );
+
+    if(product){
+      product.s=Math.max(
+        0,
+        product.s-item.q
+      );
     }
   });
 
-  suggestions.sort((a,b)=> (a.avgDaily>0 ? a.stock / a.avgDaily : Infinity) - (b.avgDaily>0 ? b.stock / b.avgDaily : Infinity));
-  return { isWeekly:true, suggestions, slowItems };
+  salesHistory.unshift(record);
+  updateBalancesAfterPayment(record);
+  save();
+
+  let report=record.status==='paid'
+    ? '<div class="green">Transaksioni u mbyll me sukses.</div>'
+    : '<div class="warn">Shitja u regjistrua si borxh.</div>';
+
+  report+=`
+    <p><b>Total:</b> ${money(record.totalAll)} ALL</p>
+    <p><b>Paguar:</b> ${money(record.amountPaid)} ALL</p>
+    <p><b>Klienti dha:</b>
+      ${money(record.cashGivenRaw)}
+      ${record.paymentCurrency}
+    </p>
+    <p><b>Kusur:</b>
+      ${money(record.changeALL)} ALL
+    </p>
+    <p><b>Mbetje:</b>
+      ${money(record.due)} ALL
+    </p>
+  `;
+
+  if(record.paymentMethod==='cash_eur'){
+    report+=`
+      <p class="small">
+        Euro të futura:
+        ${money(record.cashGivenRaw)} EUR
+      </p>
+      <p class="small">
+        Lekë të nxjerra si kusur:
+        ${money(record.changeALL)} ALL
+      </p>
+    `;
+  }
+
+  if(record.paymentMethod==='card'){
+    report+=`
+      <p class="small">
+        Regjistruar vetëm te karta:
+        ${money(record.amountPaid)} ALL
+      </p>
+    `;
+  }
+
+  report+=`
+    <hr>
+    <b>Produktet:</b>
+    <ul>
+      ${record.items.map(item=>`
+        <li>
+          ${esc(item.n)}
+          × ${item.q}
+          ${item.unit==='kg'?'kg':'copë'}
+          = ${money(item.q*item.p)} ALL
+        </li>
+      `).join('')}
+    </ul>
+  `;
+
+  if(record.client){
+    report+=`
+      <hr>
+      <p><b>Klienti:</b> ${esc(record.client)}</p>
+      <p><b>Pikë të fituara:</b> ${record.loyaltyPointsEarned}</p>
+      <p><b>Pikë totale:</b> ${record.customerTotalEarned}</p>
+      <p><b>Pikë të përdorura:</b> ${record.loyaltyPointsUsed}</p>
+      <p><b>Pikë të disponueshme:</b> ${record.loyaltyBalanceAfter}</p>
+    `;
+  }
+
+  cancelSale();
+  renderAll();
+
+  showTxn(
+    record.status==='paid'
+      ? 'Shitje e plotë'
+      : 'Shitje me borxh',
+    report
+  );
+
+  printInvoice(record);
 }
 
-/* ========= SETTINGS ========= */
-function loadSettingsUI(){
-  document.getElementById('cfg_leadDays').value = reorderConfig.leadDays || 3;
-  document.getElementById('cfg_reviewDays').value = reorderConfig.reviewPeriodDays || 7;
-  document.getElementById('cfg_safety').value = reorderConfig.safetyStockFactor || 1.5;
-  exchangeRateInput.value = exchangeRate || 100;
-  forceDailyRateEl.checked = forceDailyRate;
-  useLoyaltyPointsEl.disabled = true;
+function cancelSale(){
+  cart=[];
+  $('saleScan').value='';
+  $('saleWeight').value='';
+  $('client').value='';
+  $('clientPhone').value='';
+  $('paid').value='';
+  $('surcharge').value='0';
+  $('useLoyaltyPoints').checked=false;
+  $('useLoyaltyPoints').disabled=true;
+  $('customerResults').style.display='none';
+  $('customerResults').innerHTML='';
+  renderCart();
+  refreshLoyaltyUI();
+}
+
+/* ================= PRINTING ================= */
+
+function printInvoice(record){
+  const items=(record.items||[]).map(item=>`
+    <tr>
+      <td>${esc(item.n)}</td>
+      <td>${item.q} ${item.unit==='kg'?'kg':'copë'}</td>
+      <td>${money(item.p)} ALL</td>
+      <td>${money(item.q*item.p)} ALL</td>
+    </tr>
+  `).join('');
+
+  $('printArea').innerHTML=`
+    <div style="font-family:Arial,sans-serif;max-width:420px;margin:auto">
+      <h2 style="text-align:center;margin:0">
+        POS Market
+      </h2>
+
+      <p style="text-align:center;font-size:12px">
+        Faturë shitjeje
+      </p>
+
+      <hr>
+
+      <p>
+        <b>Data:</b> ${esc(dateTime(record.timestamp))}<br>
+        <b>Klient:</b> ${esc(record.client||'--')}<br>
+        <b>Mënyra:</b> ${esc(record.paymentMethod)}
+      </p>
+
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <th style="text-align:left">Produkt</th>
+          <th>Sasi</th>
+          <th>Çmim</th>
+          <th>Total</th>
+        </tr>
+        ${items}
+      </table>
+
+      <hr>
+
+      <p>
+        <b>Subtotal:</b> ${money(record.subtotalAll)} ALL<br>
+        <b>Shtesë:</b> ${money(record.surchargeAll)} ALL<br>
+        <b>Zbritje:</b> ${money(record.loyaltyDiscountALL)} ALL<br>
+        <b>TOTAL:</b> ${money(record.totalAll)} ALL<br>
+        <b>Paguar:</b> ${money(record.amountPaid)} ALL<br>
+        <b>Kusur:</b> ${money(record.changeALL)} ALL<br>
+        <b>Mbetje:</b> ${money(record.due)} ALL
+      </p>
+
+      ${
+        record.client
+          ? `
+            <hr>
+            <p>
+              <b>Pikë të fituara:</b>
+              ${record.loyaltyPointsEarned}<br>
+              <b>Pikë totale:</b>
+              ${record.customerTotalEarned}<br>
+              <b>Pikë të përdorshme:</b>
+              ${record.loyaltyBalanceAfter}
+            </p>
+          `
+          : ''
+      }
+
+      <p style="text-align:center;font-size:12px">
+        Faleminderit!
+      </p>
+    </div>
+  `;
+
+  const printWindow=window.open(
+    '',
+    '_blank',
+    'width=500,height=700'
+  );
+
+  if(!printWindow){
+    alert('Lejo popup-et në browser për të printuar faturën.');
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="sq">
+    <head>
+      <title>Faturë</title>
+      <style>
+        body{margin:10px;background:#fff}
+        table,th,td{border:1px solid #ddd;padding:5px}
+        @media print{button{display:none}}
+      </style>
+    </head>
+    <body>
+      ${$('printArea').innerHTML}
+      <script>
+        window.onload=function(){
+          window.print();
+          window.onafterprint=function(){
+            window.close();
+          };
+        };
+      <\/script>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
+
+/* ================= HISTORY / DEBT ================= */
+
+function renderHistory(){
+  $('histTable').innerHTML=`
+    <tr>
+      <th>Data</th><th>Klient</th><th>Total</th>
+      <th>Paguar</th><th>Mbetje</th><th>Mënyra</th>
+      <th>Pikë totale</th><th>Veprime</th>
+    </tr>
+  `;
+
+  salesHistory.forEach((record,index)=>{
+    $('histTable').insertAdjacentHTML('beforeend',`
+      <tr>
+        <td>${esc(dateTime(record.timestamp))}</td>
+        <td>${esc(record.client||'--')}</td>
+        <td>${money(record.totalAll)} ALL</td>
+        <td>${money(record.amountPaid)} ALL</td>
+        <td>${money(record.due)} ALL</td>
+        <td>${esc(record.paymentMethod)}</td>
+        <td>${record.customerTotalEarned||0}</td>
+        <td>
+          <button onclick="viewSale(${index})">Shiko</button>
+          <button class="danger" onclick="deleteSale(${index})">🗑️</button>
+        </td>
+      </tr>
+    `);
+  });
+}
+
+function viewSale(index){
+  const record=salesHistory[index];
+
+  if(!record)return;
+
+  currentSaleIndex=index;
+  $('settleAmount').value=record.due||'';
+
+  $('viewBody').innerHTML=`
+    <p><b>Data:</b> ${esc(dateTime(record.timestamp))}</p>
+    <p><b>Klient:</b> ${esc(record.client||'--')}</p>
+    <p><b>Total:</b> ${money(record.totalAll)} ALL</p>
+    <p><b>Paguar:</b> ${money(record.amountPaid)} ALL</p>
+    <p><b>Mbetje:</b> ${money(record.due)} ALL</p>
+    <p><b>Mënyra:</b> ${esc(record.paymentMethod)}</p>
+    <p><b>Pikë të fituara:</b> ${record.loyaltyPointsEarned||0}</p>
+    <p><b>Pikë totale:</b> ${record.customerTotalEarned||0}</p>
+    <p><b>Pikë të disponueshme:</b> ${record.loyaltyBalanceAfter||0}</p>
+    <hr>
+    <ul>
+      ${(record.items||[]).map(item=>`
+        <li>
+          ${esc(item.n)} × ${item.q}
+          ${item.unit==='kg'?'kg':'copë'}
+          = ${money(item.q*item.p)} ALL
+        </li>
+      `).join('')}
+    </ul>
+  `;
+
+  $('viewModal').style.display='block';
+}
+
+function closeView(){
+  $('viewModal').style.display='none';
+  currentSaleIndex=null;
+}
+
+function deleteSale(index){
+  if(!salesHistory[index])return;
+
+  if(!confirm(
+    'Fshi këtë shitje? Bilanci dhe stoku nuk rikthehen.'
+  )){
+    return;
+  }
+
+  salesHistory.splice(index,1);
+  save();
+  renderAll();
+}
+
+function settleDebt(){
+  const record=salesHistory[currentSaleIndex];
+
+  if(!record){
+    alert('Nuk u gjet shitja.');
+    return;
+  }
+
+  if(record.due<=0){
+    alert('Kjo shitje nuk ka borxh.');
+    return;
+  }
+
+  const amount=Math.min(
+    num($('settleAmount').value),
+    record.due
+  );
+
+  if(amount<=0){
+    alert('Vendos një shumë të vlefshme.');
+    return;
+  }
+
+  record.amountPaid+=amount;
+  record.due=Math.max(0,record.due-amount);
+  record.status=record.due<=0?'paid':'owed';
+
+  if(record.paymentMethod==='cash_all'){
+    cashALL+=amount;
+  }
+
+  if(record.paymentMethod==='card'){
+    cardALL+=amount;
+  }
+
+  if(record.paymentMethod==='cash_eur'){
+    cashEUR+=amount/exchangeRate;
+  }
+
+  save();
+  renderAll();
+  viewSale(currentSaleIndex);
+
+  showTxn(
+    'Shlyerje borxhi',
+    `<div class="green">
+      U shlyen ${money(amount)} ALL.
+    </div>`
+  );
+}
+
+/* ================= EXPORT ================= */
+
+function exportCSV(){
+  if(!salesHistory.length){
+    alert('Nuk ka të dhëna.');
+    return;
+  }
+
+  const rows=[[
+    'id','timestamp','client','clientPhone',
+    'totalAll','amountPaid','due',
+    'paymentMethod','cashGivenRaw','changeALL',
+    'pointsEarned','customerTotalEarned','items'
+  ]];
+
+  salesHistory.slice().reverse().forEach(record=>{
+    rows.push([
+      record.id,
+      record.timestamp,
+      record.client||'',
+      record.clientPhone||'',
+      record.totalAll,
+      record.amountPaid,
+      record.due,
+      record.paymentMethod,
+      record.cashGivenRaw,
+      record.changeALL,
+      record.loyaltyPointsEarned||0,
+      record.customerTotalEarned||0,
+      (record.items||[])
+        .map(item=>`${item.n} x${item.q} ${item.unit}`)
+        .join(' | ')
+    ]);
+  });
+
+  downloadFile(
+    'sales_history.csv',
+    '\uFEFF'+rows.map(
+      row=>row.map(csvCell).join(',')
+    ).join('\n'),
+    'text/csv;charset=utf-8'
+  );
+}
+
+function exportLoyaltyData(){
+  const rows=[[
+    'name','phone','points','totalEarned',
+    'totalUsed','totalSpentALL','transactions'
+  ]];
+
+  getCustomers().forEach(customer=>{
+    rows.push([
+      customer.name||'',
+      customer.phone||'',
+      customer.points||0,
+      customer.totalEarned||0,
+      customer.totalUsed||0,
+      customer.totalSpentALL||0,
+      customer.transactions||0
+    ]);
+  });
+
+  downloadFile(
+    'loyalty_customers.csv',
+    '\uFEFF'+rows.map(
+      row=>row.map(csvCell).join(',')
+    ).join('\n'),
+    'text/csv;charset=utf-8'
+  );
+}
+
+function backupData(){
+  downloadFile(
+    'pos_market_backup.json',
+    JSON.stringify({
+      version:8,
+      createdAt:new Date().toISOString(),
+      products,
+      salesHistory,
+      loyaltyCustomers,
+      cashALL,
+      cardALL,
+      cashEUR,
+      openingFloatALL,
+      kasaOpenedAt,
+      exchangeRate,
+      reorderConfig
+    },null,2),
+    'application/json'
+  );
+}
+
+function restoreData(){
+  const input=document.createElement('input');
+
+  input.type='file';
+  input.accept='application/json';
+
+  input.onchange=event=>{
+    const file=event.target.files[0];
+
+    if(!file)return;
+
+    const reader=new FileReader();
+
+    reader.onload=loadEvent=>{
+      try{
+        const data=JSON.parse(
+          loadEvent.target.result
+        );
+
+        if(Array.isArray(data.products)){
+          products=data.products.map(productData);
+        }
+
+        if(Array.isArray(data.salesHistory)){
+          salesHistory=data.salesHistory;
+        }
+
+        if(
+          data.loyaltyCustomers &&
+          typeof data.loyaltyCustomers==='object'
+        ){
+          loyaltyCustomers=data.loyaltyCustomers;
+        }
+
+        cashALL=num(data.cashALL,cashALL);
+        cardALL=num(data.cardALL,cardALL);
+        cashEUR=num(data.cashEUR,cashEUR);
+        openingFloatALL=num(data.openingFloatALL,openingFloatALL);
+        kasaOpenedAt=String(
+          data.kasaOpenedAt||kasaOpenedAt
+        );
+        exchangeRate=Math.max(
+          .0001,
+          num(data.exchangeRate,exchangeRate)
+        );
+
+        if(data.reorderConfig){
+          reorderConfig={
+            ...reorderConfig,
+            ...data.reorderConfig
+          };
+        }
+
+        save();
+        renderAll();
+
+        alert('Backup u restaurua me sukses.');
+      }catch(error){
+        console.error(error);
+        alert('Backup i pavlefshëm.');
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  input.click();
+}
+
+function clearOld(){
+  if(!confirm(
+    'Je i sigurt? Do të fshihet i gjithë historiku.'
+  )){
+    return;
+  }
+
+  salesHistory=[];
+  save();
+  renderAll();
+}
+
+/* ================= SETTINGS ================= */
+
+function loadSettings(){
+  $('cfg_leadDays').value=
+    reorderConfig.leadDays||3;
+
+  $('cfg_reviewDays').value=
+    reorderConfig.reviewPeriodDays||7;
+
+  $('cfg_safety').value=
+    reorderConfig.safetyStockFactor||1.5;
+
+  $('exchangeRateInput').value=
+    exchangeRate;
 }
 
 function saveSettings(){
-  reorderConfig.leadDays = Math.max(1, safeNumber(document.getElementById('cfg_leadDays').value, 3));
-  reorderConfig.reviewPeriodDays = Math.max(1, safeNumber(document.getElementById('cfg_reviewDays').value, 7));
-  reorderConfig.safetyStockFactor = Math.max(0.1, safeNumber(document.getElementById('cfg_safety').value, 1.5));
-  localStorage.setItem('reorderCfg', JSON.stringify(reorderConfig));
-  showTxn('<div class="success">Cilësimet u ruajtën</div>');
-  txnTitleEl.textContent = 'Cilësimet';
+  reorderConfig.leadDays=Math.max(
+    1,
+    num($('cfg_leadDays').value,3)
+  );
+
+  reorderConfig.reviewPeriodDays=Math.max(
+    1,
+    num($('cfg_reviewDays').value,7)
+  );
+
+  reorderConfig.safetyStockFactor=Math.max(
+    .1,
+    num($('cfg_safety').value,1.5)
+  );
+
+  save();
+
+  showTxn(
+    'Cilësimet',
+    '<div class="green">Cilësimet u ruajtën.</div>'
+  );
 }
 
-/* ========= MODALS ========= */
-function showTxn(html){ txnMsgEl.innerHTML = html; txnModalEl.style.display = 'block'; }
-function closeTxn(){ txnModalEl.style.display = 'none'; txnMsgEl.innerHTML = ''; }
+/* ================= MODALS ================= */
 
-/* ========= STORAGE SYNC ========= */
-window.addEventListener('storage', e=>{
-  if(e.key === 'p'){ products = safeParse(e.newValue, []); renderProducts(); renderStats(); checkAlerts(); }
-  if(e.key === 'salesHistory'){ salesHistory = safeParse(e.newValue, []); renderHistory(); renderStats(); }
-  if(e.key === 'daily'){ daily = safeNumber(e.newValue, 0); updateDaily(); }
-  if(e.key === 'exchangeRate'){ exchangeRate = safeNumber(e.newValue, exchangeRate); exchangeRateInput.value = exchangeRate; }
-  if(e.key === 'eurInRegister'){ eurInRegister = safeNumber(e.newValue, 0); updateDaily(); }
-  if(e.key === 'loyaltyCustomers'){ loyaltyCustomers = safeParse(e.newValue, {}); renderLoyaltyTable(); refreshLoyaltyUI(); }
-});
+function showTxn(title,html){
+  $('txnTitle').textContent=title;
+  $('txnMsg').innerHTML=html;
+  $('txnModal').style.display='block';
+}
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await ensureDefaultUsers();
-  normalizeProducts();
+function closeTxn(){
+  $('txnModal').style.display='none';
+  $('txnMsg').innerHTML='';
+}
+
+/* ================= RENDER ================= */
+
+function renderAll(){
   renderProducts();
+  renderCart();
   renderHistory();
   renderLoyaltyTable();
-  updateDaily();
-  loadSettingsUI();
   renderStats();
-  checkAlerts();
+  updateBalance();
   refreshLoyaltyUI();
+  checkAlerts();
+  loadSettings();
+}
+
+/* ================= EVENTS ================= */
+
+$('saleScan').addEventListener('keydown',event=>{
+  if(event.key==='Enter'){
+    event.preventDefault();
+    manualAdd();
+  }
 });
 
-window.checkAlerts = checkAlerts;
-window.buildReorderReportRaw = buildReorderReportRaw;
-window.setExchangeRate = v => {
-  exchangeRate = safeNumber(v, exchangeRate);
-  localStorage.setItem('exchangeRate', String(exchangeRate));
-  exchangeRateInput.value = exchangeRate;
-  recalc();
-};
+$('pb').addEventListener('keydown',event=>{
+  if(event.key==='Enter'){
+    event.preventDefault();
+    $('pn').focus();
+  }
+});
 
+$('paid').addEventListener('input',recalc);
+$('client').addEventListener('input',refreshLoyaltyUI);
+$('clientPhone').addEventListener('input',refreshLoyaltyUI);
+$('clientSearch').addEventListener('input',renderLoyaltyTable);
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+    document.querySelectorAll('.modal').forEach(
+      modal=>modal.style.display='none'
+    );
+  }
+});
+
+[
+  'alertsModal',
+  'viewModal',
+  'txnModal'
+].forEach(id=>{
+  $(id).addEventListener('click',event=>{
+    if(event.target===$(id)){
+      $(id).style.display='none';
+    }
+  });
+});
+
+window.addEventListener('storage',()=>{
+  products=parse(localStorage.getItem('p'),[]);
+  salesHistory=parse(
+    localStorage.getItem('salesHistory'),
+    []
+  );
+  loyaltyCustomers=parse(
+    localStorage.getItem('loyaltyCustomers'),
+    {}
+  );
+
+  cashALL=num(
+    localStorage.getItem('cashALL'),
+    num(localStorage.getItem('daily'),0)
+  );
+
+  cardALL=num(
+    localStorage.getItem('cardALL'),
+    num(localStorage.getItem('cardBalanceALL'),0)
+  );
+
+  cashEUR=num(
+    localStorage.getItem('cashEUR'),
+    num(localStorage.getItem('eurInRegister'),0)
+  );
+
+  openingFloatALL=num(
+    localStorage.getItem('openingFloatALL'),
+    0
+  );
+
+  kasaOpenedAt=
+    localStorage.getItem('kasaOpenedAt')||'';
+
+  exchangeRate=num(
+    localStorage.getItem('exchangeRate'),
+    100
+  );
+
+  renderAll();
+});
+
+/* ================= INITIALIZATION ================= */
+
+renderAll();
+
+/* ================= GLOBAL FUNCTIONS ================= */
+
+window.doLogin=doLogin;
+window.logout=logout;
+window.openSec=openSec;
+
+window.addProduct=addProduct;
+window.updateProduct=updateProduct;
+window.deleteProduct=deleteProduct;
+
+window.openAlertsModal=openAlertsModal;
+window.closeAlertsModal=closeAlertsModal;
+
+window.manualAdd=manualAdd;
+window.addToCart=addToCart;
+window.changeQty=changeQty;
+window.removeCartItem=removeCartItem;
+window.recalc=recalc;
+window.paymentChanged=paymentChanged;
+window.pay=pay;
+window.cancelSale=cancelSale;
+
+window.openKasa=openKasa;
+window.updateBalance=updateBalance;
+window.saveExchangeRate=saveExchangeRate;
+window.closeDay=closeDay;
+window.exportDailyClosuresExcel=exportDailyClosuresExcel;
+
+window.viewSale=viewSale;
+window.closeView=closeView;
+window.deleteSale=deleteSale;
+window.settleDebt=settleDebt;
+
+window.printInvoice=printInvoice;
+window.exportCSV=exportCSV;
+window.exportLoyaltyData=exportLoyaltyData;
+window.backupData=backupData;
+window.restoreData=restoreData;
+window.clearOld=clearOld;
+
+window.selectCustomer=selectCustomer;
+window.renderLoyaltyTable=renderLoyaltyTable;
+window.resetClientFilter=resetClientFilter;
+window.saveSettings=saveSettings;
+window.closeTxn=closeTxn;
 </script>
 
 </body>
