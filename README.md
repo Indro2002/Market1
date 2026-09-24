@@ -404,7 +404,7 @@ function esc(value){
 }
 
 function csvCell(value){
-  return `"${String(value??'').replace(/"/g,'""')}"`;
+  return `"${String(value??'').replace(/"/g,'""')}"`
 }
 
 function localDate(value){
@@ -1015,10 +1015,17 @@ function resetClientFilter(){
 /* ================= CART AND WEIGHT ================= */
 
 function findProduct(value){
-  const query=normalized(value);
+  const query = normalized(value || '');
 
-  return products.find(product=>
-    normalized(product.b)===query||
+  if(!query) return null;
+
+  const exactBarcode = products.find(product =>
+    normalized(product.b) === query
+  );
+
+  if(exactBarcode) return exactBarcode;
+
+  return products.find(product =>
     normalized(product.n).includes(query)
   );
 }
@@ -1507,41 +1514,35 @@ function closeDay(){
 
 /* ================= PAYMENTS ================= */
 
+/* RREGULLIMI:
+   - Sa para dha klienti duhet të mbahet si shuma reale e dhënë.
+   - Sa u pagua në fakt duhet të jetë minimumi ndërmjet shuma e dhënë dhe totali.
+   - Kusuri duhet të llogaritet vetëm kur klienti paguan me cash.
+   - Në kartë nuk ka kusur.
+   - Në cash EUR, kursi përdoret për konvertimin.
+*/
 function updateBalancesAfterPayment(record){
-  /*
-    Cash ALL:
-    - Cash ALL shton shumën e paguar.
-    - Cash EUR heq kusurin e dhënë në ALL.
-    - Kartë nuk ndryshon Cash ALL.
+  const method = record.paymentMethod || 'cash_all';
+  const amount = num(record.amountPaid, 0);
 
-    Cash EUR:
-    - Shton eurot reale që klienti dha.
-
-    Kartë:
-    - Shton vetëm bilancin e kartës.
-  */
-  if(record.paymentMethod==='cash_all'){
-    cashALL+=record.amountPaid;
+  if(method === 'cash_all'){
+    cashALL += amount;
+  }else if(method === 'card'){
+    cardALL += amount;
+  }else if(method === 'cash_eur'){
+    cashEUR += num(record.cashGivenRaw, 0);
+    cashALL -= Math.max(0, num(record.changeALL, 0));
   }
 
-  if(record.paymentMethod==='card'){
-    cardALL+=record.amountPaid;
-  }
-
-  if(record.paymentMethod==='cash_eur'){
-    cashEUR+=record.cashGivenRaw;
-    cashALL-=record.changeALL;
-  }
-
-  cashALL=Math.round(cashALL*100)/100;
-  cardALL=Math.round(cardALL*100)/100;
-  cashEUR=Math.round(cashEUR*100)/100;
+  cashALL = Math.round(cashALL * 100) / 100;
+  cardALL = Math.round(cardALL * 100) / 100;
+  cashEUR = Math.round(cashEUR * 100) / 100;
 }
 
 function pay(){
   if(!kasaOpenedAt){
     alert(
-      'Kasa nuk është hapur. '+
+      'Kasa nuk është hapur. ' +
       'Vendos thyerjen te Bilanci dhe hap kasën.'
     );
     openSec('bil');
@@ -1557,17 +1558,21 @@ function pay(){
   const method=$('paymentMethod').value;
   const rawPaid=num($('paid').value);
 
-  const paidALL=
-    method==='cash_eur'
-      ? rawPaid*exchangeRate
-      : rawPaid;
+  if(!Number.isFinite(rawPaid)||rawPaid<0){
+    alert('Shuma e paguar është e pavlefshme.');
+    return;
+  }
+
+  const paidALL=method==='cash_eur'
+    ? rawPaid*exchangeRate
+    : rawPaid;
 
   const amountPaid=Math.min(
-    paidALL,
+    Math.max(0,paidALL),
     totals.total
   );
 
-  const change=Math.max(
+  const changeALL=Math.max(
     0,
     paidALL-totals.total
   );
@@ -1577,13 +1582,17 @@ function pay(){
     totals.total-paidALL
   );
 
+  const finalChangeALL=method==='card'
+    ? 0
+    : changeALL;
+
   const customer=getCustomer();
 
   const record={
     id:`${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
     timestamp:new Date().toISOString(),
-    client:customer?.name||clean($('client').value)||null,
-    clientPhone:customer?.phone||clean($('clientPhone').value)||null,
+    client:customer?.name || clean($('client').value) || null,
+    clientPhone:customer?.phone || clean($('clientPhone').value) || null,
     items:JSON.parse(JSON.stringify(cart)),
     subtotalAll:totals.subtotal,
     surchargePct:totals.percentage,
@@ -1592,13 +1601,13 @@ function pay(){
     loyaltyPointsUsed:totals.loyalty.used,
     totalAll:totals.total,
     paymentMethod:method,
-    paymentCurrency:method==='cash_eur'?'EUR':'ALL',
+    paymentCurrency:method==='cash_eur' ? 'EUR' : 'ALL',
     cashGivenRaw:rawPaid,
     cashGivenALL:paidALL,
     amountPaid,
-    changeALL:change,
+    changeALL:finalChangeALL,
     due,
-    status:due<=0?'paid':'owed',
+    status:due<=0 ? 'paid' : 'owed',
     exchangeRateAtSale:exchangeRate,
     loyaltyPointsEarned:0,
     loyaltyBalanceAfter:0,
@@ -1607,27 +1616,31 @@ function pay(){
   };
 
   if(customer){
-    const earned=calculateEarnedPoints(
-      record.amountPaid
-    );
+    const earned=calculateEarnedPoints(record.amountPaid);
 
     customer.points=Math.max(
       0,
-      customer.points-
-      record.loyaltyPointsUsed+
+      num(customer.points) -
+      record.loyaltyPointsUsed +
       earned
     );
 
-    customer.totalEarned=
-      num(customer.totalEarned)+earned;
+    customer.totalEarned =
+      num(customer.totalEarned) + earned;
 
-    customer.totalUsed=
-      num(customer.totalUsed)+
+    customer.totalUsed =
+      num(customer.totalUsed) +
       record.loyaltyPointsUsed;
 
-    customer.totalSpentALL+=record.amountPaid;
-    customer.transactions=num(customer.transactions)+1;
-    customer.updatedAt=new Date().toISOString();
+    customer.totalSpentALL =
+      num(customer.totalSpentALL) +
+      record.amountPaid;
+
+    customer.transactions =
+      num(customer.transactions) + 1;
+
+    customer.updatedAt =
+      new Date().toISOString();
 
     record.loyaltyPointsEarned=earned;
     record.loyaltyBalanceAfter=customer.points;
@@ -1643,7 +1656,7 @@ function pay(){
     if(product){
       product.s=Math.max(
         0,
-        product.s-item.q
+        num(product.s)-num(item.q)
       );
     }
   });
@@ -1652,34 +1665,48 @@ function pay(){
   updateBalancesAfterPayment(record);
   save();
 
+  const methodLabel={
+    cash_all:'Cash (ALL)',
+    card:'Kartë',
+    cash_eur:'Cash (EUR)'
+  }[record.paymentMethod] || record.paymentMethod;
+
+  const clientGivenText=
+    record.paymentMethod==='cash_eur'
+      ? `${money(record.cashGivenRaw)} EUR`
+      : `${money(record.cashGivenRaw)} ALL`;
+
   let report=record.status==='paid'
     ? '<div class="green">Transaksioni u mbyll me sukses.</div>'
     : '<div class="warn">Shitja u regjistrua si borxh.</div>';
 
   report+=`
+    <p><b>Mënyra:</b> ${esc(methodLabel)}</p>
     <p><b>Total:</b> ${money(record.totalAll)} ALL</p>
+    <p><b>Klienti dha:</b> ${clientGivenText}</p>
     <p><b>Paguar:</b> ${money(record.amountPaid)} ALL</p>
-    <p><b>Klienti dha:</b>
-      ${money(record.cashGivenRaw)}
-      ${record.paymentCurrency}
-    </p>
-    <p><b>Kusur:</b>
-      ${money(record.changeALL)} ALL
-    </p>
-    <p><b>Mbetje:</b>
-      ${money(record.due)} ALL
-    </p>
+    <p><b>Kusur:</b> ${money(record.changeALL)} ALL</p>
+    <p><b>Mbetje/Borxh:</b> ${money(record.due)} ALL</p>
   `;
 
   if(record.paymentMethod==='cash_eur'){
     report+=`
+      <hr>
       <p class="small">
-        Euro të futura:
-        ${money(record.cashGivenRaw)} EUR
+        Klienti dha:
+        <b>${money(record.cashGivenRaw)} EUR</b>
       </p>
       <p class="small">
-        Lekë të nxjerra si kusur:
-        ${money(record.changeALL)} ALL
+        Vlera në ALL:
+        <b>${money(record.cashGivenALL)} ALL</b>
+      </p>
+      <p class="small">
+        Kusuri i kthyer:
+        <b>${money(record.changeALL)} ALL</b>
+      </p>
+      <p class="small">
+        Kursi:
+        <b>1 EUR = ${money(record.exchangeRateAtSale)} ALL</b>
       </p>
     `;
   }
@@ -1687,8 +1714,8 @@ function pay(){
   if(record.paymentMethod==='card'){
     report+=`
       <p class="small">
-        Regjistruar vetëm te karta:
-        ${money(record.amountPaid)} ALL
+        Pagesa u regjistrua me kartë:
+        <b>${money(record.amountPaid)} ALL</b>
       </p>
     `;
   }
@@ -1712,10 +1739,18 @@ function pay(){
     report+=`
       <hr>
       <p><b>Klienti:</b> ${esc(record.client)}</p>
-      <p><b>Pikë të fituara:</b> ${record.loyaltyPointsEarned}</p>
-      <p><b>Pikë totale:</b> ${record.customerTotalEarned}</p>
-      <p><b>Pikë të përdorura:</b> ${record.loyaltyPointsUsed}</p>
-      <p><b>Pikë të disponueshme:</b> ${record.loyaltyBalanceAfter}</p>
+      <p><b>Pikë të fituara:</b>
+        ${record.loyaltyPointsEarned}
+      </p>
+      <p><b>Pikë totale:</b>
+        ${record.customerTotalEarned}
+      </p>
+      <p><b>Pikë të përdorura:</b>
+        ${record.loyaltyPointsUsed}
+      </p>
+      <p><b>Pikë të disponueshme:</b>
+        ${record.loyaltyBalanceAfter}
+      </p>
     `;
   }
 
@@ -1750,75 +1785,246 @@ function cancelSale(){
 
 /* ================= PRINTING ================= */
 
+/* RREGULLIMI:
+   - Fatura duhet të shfaqë:
+     1. Total
+     2. Klienti dha
+     3. Paguar
+     4. Kusur
+     5. Borxh / Mbetje
+   - Në Cash EUR duhet të shfaqet edhe konvertimi në ALL.
+*/
 function printInvoice(record){
   const items=(record.items||[]).map(item=>`
     <tr>
       <td>${esc(item.n)}</td>
-      <td>${item.q} ${item.unit==='kg'?'kg':'copë'}</td>
+      <td>
+        ${item.q}
+        ${item.unit==='kg'?'kg':'copë'}
+      </td>
       <td>${money(item.p)} ALL</td>
       <td>${money(item.q*item.p)} ALL</td>
     </tr>
   `).join('');
 
+  const paymentLabel={
+    cash_all:'Cash (ALL)',
+    card:'Kartë',
+    cash_eur:'Cash (EUR)'
+  }[record.paymentMethod] || record.paymentMethod || '--';
+
+  const clientGiven=
+    record.paymentMethod==='cash_eur'
+      ? `${money(record.cashGivenRaw)} EUR`
+      : `${money(record.cashGivenRaw)} ALL`;
+
+  const clientGivenALL=
+    record.paymentMethod==='cash_eur'
+      ? `${money(record.cashGivenALL)} ALL`
+      : `${money(record.cashGivenRaw)} ALL`;
+
   $('printArea').innerHTML=`
-    <div style="font-family:Arial,sans-serif;max-width:420px;margin:auto">
+    <div style="
+      font-family:Arial,sans-serif;
+      max-width:420px;
+      margin:auto;
+      color:#111
+    ">
+
       <h2 style="text-align:center;margin:0">
         POS Market
       </h2>
 
-      <p style="text-align:center;font-size:12px">
+      <p style="
+        text-align:center;
+        font-size:12px;
+        margin:5px 0 12px
+      ">
         Faturë shitjeje
       </p>
 
       <hr>
 
       <p>
-        <b>Data:</b> ${esc(dateTime(record.timestamp))}<br>
-        <b>Klient:</b> ${esc(record.client||'--')}<br>
-        <b>Mënyra:</b> ${esc(record.paymentMethod)}
+        <b>Data:</b>
+        ${esc(dateTime(record.timestamp))}<br>
+
+        <b>Klient:</b>
+        ${esc(record.client||'--')}<br>
+
+        <b>Mënyra e pagesës:</b>
+        ${esc(paymentLabel)}
       </p>
 
-      <table style="width:100%;border-collapse:collapse">
-        <tr>
-          <th style="text-align:left">Produkt</th>
-          <th>Sasi</th>
-          <th>Çmim</th>
-          <th>Total</th>
-        </tr>
-        ${items}
+      <table style="
+        width:100%;
+        border-collapse:collapse;
+        font-size:13px
+      ">
+        <thead>
+          <tr>
+            <th style="text-align:left">Produkt</th>
+            <th>Sasi</th>
+            <th>Çmim</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${items}
+        </tbody>
       </table>
 
       <hr>
 
-      <p>
-        <b>Subtotal:</b> ${money(record.subtotalAll)} ALL<br>
-        <b>Shtesë:</b> ${money(record.surchargeAll)} ALL<br>
-        <b>Zbritje:</b> ${money(record.loyaltyDiscountALL)} ALL<br>
-        <b>TOTAL:</b> ${money(record.totalAll)} ALL<br>
-        <b>Paguar:</b> ${money(record.amountPaid)} ALL<br>
-        <b>Kusur:</b> ${money(record.changeALL)} ALL<br>
-        <b>Mbetje:</b> ${money(record.due)} ALL
-      </p>
+      <div style="font-size:14px;line-height:1.8">
+        <div style="
+          display:flex;
+          justify-content:space-between
+        ">
+          <span>Subtotal:</span>
+          <b>${money(record.subtotalAll)} ALL</b>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between
+        ">
+          <span>Shtesë:</span>
+          <b>${money(record.surchargeAll)} ALL</b>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between
+        ">
+          <span>Zbritje Loyal:</span>
+          <b>-${money(record.loyaltyDiscountALL)} ALL</b>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          font-size:18px;
+          border-top:2px solid #111;
+          margin-top:5px;
+          padding-top:5px
+        ">
+          <span><b>TOTAL:</b></span>
+          <b>${money(record.totalAll)} ALL</b>
+        </div>
+
+        <br>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          color:#1d4ed8
+        ">
+          <span><b>Klienti dha:</b></span>
+          <b>${clientGiven}</b>
+        </div>
+
+        ${
+          record.paymentMethod==='cash_eur'
+            ? `
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                font-size:12px;
+                color:#555
+              ">
+                <span>Vlera e pagesës në ALL:</span>
+                <b>${clientGivenALL}</b>
+              </div>
+
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                font-size:12px;
+                color:#555
+              ">
+                <span>Kursi:</span>
+                <b>1 EUR = ${money(record.exchangeRateAtSale)} ALL</b>
+              </div>
+            `
+            : ''
+        }
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          color:#15803d
+        ">
+          <span><b>Paguar:</b></span>
+          <b>${money(record.amountPaid)} ALL</b>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          color:#b45309
+        ">
+          <span><b>Kusur:</b></span>
+          <b>${money(record.changeALL)} ALL</b>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          color:#dc2626
+        ">
+          <span><b>Borxh/Mbetje:</b></span>
+          <b>${money(record.due)} ALL</b>
+        </div>
+
+      </div>
 
       ${
-        record.client
+        record.paymentMethod==='cash_eur'
           ? `
             <hr>
-            <p>
-              <b>Pikë të fituara:</b>
-              ${record.loyaltyPointsEarned}<br>
-              <b>Pikë totale:</b>
-              ${record.customerTotalEarned}<br>
-              <b>Pikë të përdorshme:</b>
-              ${record.loyaltyBalanceAfter}
+
+            <p style="font-size:13px">
+              <b>Detaje të pagesës EUR:</b><br>
+              Klienti dha:
+              <b>${money(record.cashGivenRaw)} EUR</b><br>
+              Vlera e konvertuar:
+              <b>${money(record.cashGivenALL)} ALL</b><br>
+              Kusuri në lekë:
+              <b>${money(record.changeALL)} ALL</b>
             </p>
           `
           : ''
       }
 
-      <p style="text-align:center;font-size:12px">
-        Faleminderit!
+      ${
+        record.client
+          ? `
+            <hr>
+
+            <p style="font-size:13px">
+              <b>Programi Loyal</b><br>
+              Pikë të fituara:
+              ${num(record.loyaltyPointsEarned)}<br>
+              Pikë totale:
+              ${num(record.customerTotalEarned)}<br>
+              Pikë të përdorshme:
+              ${num(record.loyaltyBalanceAfter)}
+            </p>
+          `
+          : ''
+      }
+
+      <hr>
+
+      <p style="
+        text-align:center;
+        font-size:12px
+      ">
+        Faleminderit për blerjen!
       </p>
+
     </div>
   `;
 
@@ -1837,18 +2043,43 @@ function printInvoice(record){
     <!DOCTYPE html>
     <html lang="sq">
     <head>
-      <title>Faturë</title>
+      <meta charset="UTF-8">
+      <title>Faturë POS Market</title>
+
       <style>
-        body{margin:10px;background:#fff}
-        table,th,td{border:1px solid #ddd;padding:5px}
-        @media print{button{display:none}}
+        *{box-sizing:border-box}
+        body{
+          margin:10px;
+          background:#fff;
+          color:#111;
+          font-family:Arial,sans-serif;
+        }
+        table{
+          width:100%;
+          border-collapse:collapse;
+        }
+        th,td{
+          border:1px solid #ddd;
+          padding:5px;
+          text-align:center;
+        }
+        th:first-child,td:first-child{
+          text-align:left;
+        }
+        @media print{
+          body{margin:0}
+          button{display:none!important}
+        }
       </style>
     </head>
+
     <body>
       ${$('printArea').innerHTML}
+
       <script>
         window.onload=function(){
           window.print();
+
           window.onafterprint=function(){
             window.close();
           };
@@ -2366,6 +2597,7 @@ window.renderLoyaltyTable=renderLoyaltyTable;
 window.resetClientFilter=resetClientFilter;
 window.saveSettings=saveSettings;
 window.closeTxn=closeTxn;
+window.renderAll=renderAll;
 </script>
 
 </body>
